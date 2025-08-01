@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+.pnpm-debug.log*
+.yarn-integrity
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Environment variables
+.env*.local
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# TypeScript
+*.tsbuildinfo
+
+# Vercel
+.vercel
