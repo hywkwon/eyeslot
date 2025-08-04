@@ -509,9 +509,37 @@ export default function BookingForm() {
         <CardContent className="py-6 text-center">
           <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
           <CardTitle className="text-xl mb-2">Reservation Complete!</CardTitle>
-          <CardDescription>
+          <CardDescription className="mb-6">
             Thank you! Your booking has been submitted successfully. You will receive a confirmation email shortly.
           </CardDescription>
+          
+          {/* Next Steps Guide */}
+          <div className="bg-gray-50 rounded-lg p-4 text-left">
+            <h4 className="font-semibold text-gray-900 mb-3 text-center">Check as below</h4>
+            <div className="space-y-2 text-sm text-gray-700">
+              <div className="flex items-start gap-2">
+                <span className="text-blue-500 font-medium">•</span>
+                <span><strong>Head to the store</strong> at your reserved time</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-blue-500 font-medium">•</span>
+                <span><strong>Show check my reservation page</strong> when you arrive</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-blue-500 font-medium">•</span>
+                <span><strong>Get your free eye exam</strong> and prescription check</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-blue-500 font-medium">•</span>
+                <span><strong>Need frames?</strong> Our team will help you find the perfect pair</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-blue-500 font-medium">•</span>
+                <span><strong>Share your experience</strong> with a review after your visit</span>
+              </div>
+            </div>
+            <p className="text-center text-gray-600 text-sm mt-4">See you soon!</p>
+          </div>
         </CardContent>
         <CardFooter className="justify-center">
           <Button onClick={handleNewReservation}>Make Another Reservation</Button>
