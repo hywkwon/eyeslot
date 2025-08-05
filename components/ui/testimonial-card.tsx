@@ -37,8 +37,16 @@ export function TestimonialCard({
     >
       <div className="flex items-center gap-3">
         <Avatar className="h-12 w-12">
-          <AvatarImage src={author.avatar} alt={author.name} />
-          <AvatarFallback className="bg-muted text-muted-foreground font-semibold">
+          <AvatarImage 
+            src={author.avatar} 
+            alt={author.name}
+            onLoad={() => console.log(`✅ Image loaded: ${author.avatar}`)}
+            onError={(e) => {
+              console.log(`❌ Image failed to load: ${author.avatar}`);
+              console.log('Falling back to AvatarFallback');
+            }}
+          />
+          <AvatarFallback className="bg-gradient-to-br from-purple-400 to-pink-400 text-white font-semibold text-lg">
             {author.name.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>

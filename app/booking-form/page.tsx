@@ -30,8 +30,8 @@ export default function BookingFormPage() {
             <SparklesText 
               text="Book Your eyeslot" 
               className="text-2xl md:text-3xl font-bold text-black mb-2"
-              colors={{ first: "#000000", second: "#374151" }}
-              sparklesCount={8}
+              colors={{ first: "#9E7AFF", second: "#FE8BBB" }}
+              sparklesCount={6}
             />
             <p className="text-gray-600 text-sm md:text-base">Schedule your visit to one of our eyepickup locations</p>
           </div>
