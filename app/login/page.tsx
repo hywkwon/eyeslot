@@ -92,7 +92,7 @@ export default function LoginPage() {
       author: {
         name: "Anna R.",
         handle: "Germany",
-        avatar: "/german-blonde-woman.png",
+        avatar: "/avatar-1.svg",
       },
       text: "Quick, high-quality lenses and perfect fitting. Highly recommend Viewraum!",
     },
@@ -100,7 +100,7 @@ export default function LoginPage() {
       author: {
         name: "James L.",
         handle: "Canada",
-        avatar: "/canadian-bearded-man.png",
+        avatar: "/avatar-2.svg",
       },
       text: "Better than any place I've visited in North America. Professional and friendly.",
     },
@@ -108,7 +108,7 @@ export default function LoginPage() {
       author: {
         name: "Yuki T.",
         handle: "Japan",
-        avatar: "/japanese-man-casual.png",
+        avatar: "/avatar-3.svg",
       },
       text: "Beautiful design, fast service, and the Google Maps directions made it easy.",
     },
@@ -116,7 +116,7 @@ export default function LoginPage() {
       author: {
         name: "Lucas B.",
         handle: "Brazil",
-        avatar: "/brazilian-man-curly-hair.png",
+        avatar: "/avatar-4.svg",
       },
       text: "Incredible service and communication. Everything was smooth and quick.",
     },
@@ -124,7 +124,7 @@ export default function LoginPage() {
       author: {
         name: "Sophia M.",
         handle: "France",
-        avatar: "/elegant-french-woman.png",
+        avatar: "/avatar-5.svg",
       },
       text: "Fantastic staff. Got my glasses ready within the same day.",
     },
@@ -132,7 +132,7 @@ export default function LoginPage() {
       author: {
         name: "Eric D.",
         handle: "USA",
-        avatar: "/american-man-casual.png",
+        avatar: "/avatar-6.svg",
       },
       text: "Very fast response and quality eyewear. Would use again.",
     },
@@ -140,7 +140,7 @@ export default function LoginPage() {
       author: {
         name: "Chen W.",
         handle: "Taiwan",
-        avatar: "/taiwanese-man-glasses.png",
+        avatar: "/avatar-7.svg",
       },
       text: "Their customized fitting really made a difference for my comfort.",
     },
@@ -148,7 +148,7 @@ export default function LoginPage() {
       author: {
         name: "Isabel C.",
         handle: "Spain",
-        avatar: "/spanish-woman-dark-hair.png",
+        avatar: "/avatar-8.svg",
       },
       text: "No hidden fees, transparent pricing, and very foreigner-friendly.",
     },
@@ -156,7 +156,7 @@ export default function LoginPage() {
       author: {
         name: "Michael K.",
         handle: "Australia",
-        avatar: "/australian-man-sunglasses.png",
+        avatar: "/avatar-9.svg",
       },
       text: "As a tourist, I was worried about language barriers, but the staff was incredibly helpful.",
     },
@@ -164,7 +164,7 @@ export default function LoginPage() {
       author: {
         name: "Olivia P.",
         handle: "UK",
-        avatar: "/british-redhead.png",
+        avatar: "/avatar-10.svg",
       },
       text: "The quality of lenses is exceptional. I can see clearly now and the frames are stylish!",
     },
@@ -172,7 +172,7 @@ export default function LoginPage() {
       author: {
         name: "Raj S.",
         handle: "India",
-        avatar: "/indian-professional-man.png",
+        avatar: "/avatar-11.svg",
       },
       text: "I was able to get my prescription glasses in just a few hours. Amazing service!",
     },
@@ -180,7 +180,7 @@ export default function LoginPage() {
       author: {
         name: "Nina L.",
         handle: "Sweden",
-        avatar: "/swedish-blonde-woman.png",
+        avatar: "/avatar-12.svg",
       },
       text: "The eye exam was thorough and the staff took time to explain everything to me.",
     },
@@ -188,7 +188,7 @@ export default function LoginPage() {
       author: {
         name: "Tomas H.",
         handle: "Czech Republic",
-        avatar: "/czech-man-casual.png",
+        avatar: "/avatar-13.svg",
       },
       text: "Found exactly what I was looking for at a reasonable price. Very satisfied!",
     },
@@ -196,7 +196,7 @@ export default function LoginPage() {
       author: {
         name: "Mei L.",
         handle: "China",
-        avatar: "/modern-chinese-woman.png",
+        avatar: "/avatar-14.svg",
       },
       text: "The staff helped me choose frames that perfectly suit my face shape. Very professional!",
     },
@@ -204,7 +204,7 @@ export default function LoginPage() {
       author: {
         name: "Ahmed K.",
         handle: "Egypt",
-        avatar: "/egyptian-man-formal.png",
+        avatar: "/avatar-15.svg",
       },
       text: "I was impressed by how quickly they made my glasses. Great service for travelers!",
     },
