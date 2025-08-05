@@ -92,7 +92,7 @@ export default function LoginPage() {
       author: {
         name: "Anna R.",
         handle: "Germany",
-        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face",
+        avatar: "/profile-1.svg",
       },
       text: "Quick, high-quality lenses and perfect fitting. Highly recommend Viewraum!",
     },
@@ -100,7 +100,7 @@ export default function LoginPage() {
       author: {
         name: "James L.",
         handle: "Canada",
-        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+        avatar: "/profile-2.svg",
       },
       text: "Better than any place I've visited in North America. Professional and friendly.",
     },
@@ -108,7 +108,7 @@ export default function LoginPage() {
       author: {
         name: "Yuki T.",
         handle: "Japan",
-        avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+        avatar: "/profile-3.svg",
       },
       text: "Beautiful design, fast service, and the Google Maps directions made it easy.",
     },
@@ -116,7 +116,7 @@ export default function LoginPage() {
       author: {
         name: "Lucas B.",
         handle: "Brazil",
-        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
+        avatar: "/profile-4.svg",
       },
       text: "Incredible service and communication. Everything was smooth and quick.",
     },
@@ -124,7 +124,7 @@ export default function LoginPage() {
       author: {
         name: "Sophia M.",
         handle: "France",
-        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
+        avatar: "/profile-5.svg",
       },
       text: "Fantastic staff. Got my glasses ready within the same day.",
     },
@@ -132,7 +132,7 @@ export default function LoginPage() {
       author: {
         name: "Eric D.",
         handle: "USA",
-        avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face",
+        avatar: "/profile-6.svg",
       },
       text: "Very fast response and quality eyewear. Would use again.",
     },
@@ -140,7 +140,7 @@ export default function LoginPage() {
       author: {
         name: "Chen W.",
         handle: "Taiwan",
-        avatar: "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=150&h=150&fit=crop&crop=face",
+        avatar: "/profile-7.svg",
       },
       text: "Their customized fitting really made a difference for my comfort.",
     },
@@ -148,7 +148,7 @@ export default function LoginPage() {
       author: {
         name: "Isabel C.",
         handle: "Spain",
-        avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
+        avatar: "/profile-8.svg",
       },
       text: "No hidden fees, transparent pricing, and very foreigner-friendly.",
     },
@@ -156,7 +156,7 @@ export default function LoginPage() {
       author: {
         name: "Michael K.",
         handle: "Australia",
-        avatar: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=150&h=150&fit=crop&crop=face",
+        avatar: "/profile-9.svg",
       },
       text: "As a tourist, I was worried about language barriers, but the staff was incredibly helpful.",
     },
@@ -164,7 +164,7 @@ export default function LoginPage() {
       author: {
         name: "Olivia P.",
         handle: "UK",
-        avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop&crop=face",
+        avatar: "/profile-10.svg",
       },
       text: "The quality of lenses is exceptional. I can see clearly now and the frames are stylish!",
     },
@@ -172,7 +172,7 @@ export default function LoginPage() {
       author: {
         name: "Raj S.",
         handle: "India",
-        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+        avatar: "/profile-11.svg",
       },
       text: "I was able to get my prescription glasses in just a few hours. Amazing service!",
     },
@@ -180,7 +180,7 @@ export default function LoginPage() {
       author: {
         name: "Nina L.",
         handle: "Sweden",
-        avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face",
+        avatar: "/profile-12.svg",
       },
       text: "The eye exam was thorough and the staff took time to explain everything to me.",
     },
@@ -188,7 +188,7 @@ export default function LoginPage() {
       author: {
         name: "Tomas H.",
         handle: "Czech Republic",
-        avatar: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150&h=150&fit=crop&crop=face",
+        avatar: "/profile-13.svg",
       },
       text: "Found exactly what I was looking for at a reasonable price. Very satisfied!",
     },
@@ -196,7 +196,7 @@ export default function LoginPage() {
       author: {
         name: "Mei L.",
         handle: "China",
-        avatar: "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=150&h=150&fit=crop&crop=face",
+        avatar: "/profile-14.svg",
       },
       text: "The staff helped me choose frames that perfectly suit my face shape. Very professional!",
     },
@@ -204,7 +204,7 @@ export default function LoginPage() {
       author: {
         name: "Ahmed K.",
         handle: "Egypt",
-        avatar: "https://images.unsplash.com/photo-1463453091185-61582044d556?w=150&h=150&fit=crop&crop=face",
+        avatar: "/profile-15.svg",
       },
       text: "I was impressed by how quickly they made my glasses. Great service for travelers!",
     },
