@@ -92,7 +92,7 @@ export default function LoginPage() {
       author: {
         name: "Anna R.",
         handle: "Germany",
-        avatar: "/profile-1.svg",
+        avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Anna-Germany&backgroundColor=c0aede",
       },
       text: "Quick, high-quality lenses and perfect fitting. Highly recommend Viewraum!",
     },
@@ -100,7 +100,7 @@ export default function LoginPage() {
       author: {
         name: "James L.",
         handle: "Canada",
-        avatar: "/profile-2.svg",
+        avatar: "https://api.dicebear.com/7.x/personas/svg?seed=James-Canada&backgroundColor=ffdfbf",
       },
       text: "Better than any place I've visited in North America. Professional and friendly.",
     },
@@ -108,7 +108,7 @@ export default function LoginPage() {
       author: {
         name: "Yuki T.",
         handle: "Japan",
-        avatar: "/profile-3.svg",
+        avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Yuki-Japan&backgroundColor=ffd5dc",
       },
       text: "Beautiful design, fast service, and the Google Maps directions made it easy.",
     },
@@ -116,7 +116,7 @@ export default function LoginPage() {
       author: {
         name: "Lucas B.",
         handle: "Brazil",
-        avatar: "/profile-4.svg",
+        avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Lucas-Brazil&backgroundColor=d1c4e9",
       },
       text: "Incredible service and communication. Everything was smooth and quick.",
     },
@@ -124,7 +124,7 @@ export default function LoginPage() {
       author: {
         name: "Sophia M.",
         handle: "France",
-        avatar: "/profile-5.svg",
+        avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Sophia-France&backgroundColor=ffcccb",
       },
       text: "Fantastic staff. Got my glasses ready within the same day.",
     },
@@ -132,7 +132,7 @@ export default function LoginPage() {
       author: {
         name: "Eric D.",
         handle: "USA",
-        avatar: "/profile-6.svg",
+        avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Eric-USA&backgroundColor=b3e5fc",
       },
       text: "Very fast response and quality eyewear. Would use again.",
     },
@@ -140,7 +140,7 @@ export default function LoginPage() {
       author: {
         name: "Chen W.",
         handle: "Taiwan",
-        avatar: "/profile-7.svg",
+        avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Chen-Taiwan&backgroundColor=c8e6c9",
       },
       text: "Their customized fitting really made a difference for my comfort.",
     },
@@ -148,7 +148,7 @@ export default function LoginPage() {
       author: {
         name: "Isabel C.",
         handle: "Spain",
-        avatar: "/profile-8.svg",
+        avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Isabel-Spain&backgroundColor=ffe0b2",
       },
       text: "No hidden fees, transparent pricing, and very foreigner-friendly.",
     },
@@ -156,7 +156,7 @@ export default function LoginPage() {
       author: {
         name: "Michael K.",
         handle: "Australia",
-        avatar: "/profile-9.svg",
+        avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Michael-Australia&backgroundColor=e1bee7",
       },
       text: "As a tourist, I was worried about language barriers, but the staff was incredibly helpful.",
     },
@@ -164,7 +164,7 @@ export default function LoginPage() {
       author: {
         name: "Olivia P.",
         handle: "UK",
-        avatar: "/profile-10.svg",
+        avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Olivia-UK&backgroundColor=f8bbd9",
       },
       text: "The quality of lenses is exceptional. I can see clearly now and the frames are stylish!",
     },
@@ -172,7 +172,7 @@ export default function LoginPage() {
       author: {
         name: "Raj S.",
         handle: "India",
-        avatar: "/profile-11.svg",
+        avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Raj-India&backgroundColor=dcedc1",
       },
       text: "I was able to get my prescription glasses in just a few hours. Amazing service!",
     },
@@ -180,7 +180,7 @@ export default function LoginPage() {
       author: {
         name: "Nina L.",
         handle: "Sweden",
-        avatar: "/profile-12.svg",
+        avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Nina-Sweden&backgroundColor=b2dfdb",
       },
       text: "The eye exam was thorough and the staff took time to explain everything to me.",
     },
@@ -188,7 +188,7 @@ export default function LoginPage() {
       author: {
         name: "Tomas H.",
         handle: "Czech Republic",
-        avatar: "/profile-13.svg",
+        avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Tomas-Czech&backgroundColor=ffcc80",
       },
       text: "Found exactly what I was looking for at a reasonable price. Very satisfied!",
     },
@@ -196,7 +196,7 @@ export default function LoginPage() {
       author: {
         name: "Mei L.",
         handle: "China",
-        avatar: "/profile-14.svg",
+        avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Mei-China&backgroundColor=f48fb1",
       },
       text: "The staff helped me choose frames that perfectly suit my face shape. Very professional!",
     },
@@ -204,7 +204,7 @@ export default function LoginPage() {
       author: {
         name: "Ahmed K.",
         handle: "Egypt",
-        avatar: "/profile-15.svg",
+        avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Ahmed-Egypt&backgroundColor=80cbc4",
       },
       text: "I was impressed by how quickly they made my glasses. Great service for travelers!",
     },
