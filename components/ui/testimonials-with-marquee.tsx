@@ -48,7 +48,7 @@ export function TestimonialsSection({
 
         <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
           <div 
-            className="group flex overflow-hidden p-2 [--gap:1rem] [gap:var(--gap)] flex-row [--duration:40s]"
+            className="group flex overflow-hidden p-2 [--gap:1rem] [gap:var(--gap)] flex-row [--duration:120s]"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
             onTouchStart={() => setIsPaused(true)}
@@ -58,10 +58,24 @@ export function TestimonialsSection({
               "flex shrink-0 justify-around [gap:var(--gap)] animate-marquee flex-row group-hover:[animation-play-state:paused]",
               isPaused && "[animation-play-state:paused]"
             )}>
-              {[...Array(4)].map((_, setIndex) => (
+              {[...Array(2)].map((_, setIndex) => (
                 testimonials.map((testimonial, i) => (
                   <TestimonialCard 
                     key={`${setIndex}-${i}`}
+                    {...testimonial}
+                  />
+                ))
+              ))}
+            </div>
+            {/* 무한 반복을 위한 복제 세트 */}
+            <div className={cn(
+              "flex shrink-0 justify-around [gap:var(--gap)] animate-marquee flex-row group-hover:[animation-play-state:paused]",
+              isPaused && "[animation-play-state:paused]"
+            )}>
+              {[...Array(2)].map((_, setIndex) => (
+                testimonials.map((testimonial, i) => (
+                  <TestimonialCard 
+                    key={`duplicate-${setIndex}-${i}`}
                     {...testimonial}
                   />
                 ))
