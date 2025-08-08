@@ -11,6 +11,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, CheckCircle, ExternalLink } from "lucide-react"
 import { submitBooking } from "@/lib/actions"
+import { AuroraBackground } from "@/components/ui/aurora-background"
+import { motion } from "framer-motion"
 
 interface FormData {
   user_name: string
@@ -505,46 +507,61 @@ export default function BookingForm() {
 
   if (submitted) {
     return (
-      <Card className="max-w-xl mx-auto">
-        <CardContent className="py-6 text-center">
-          <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
-          <CardTitle className="text-xl mb-2">Reservation Complete!</CardTitle>
-          <CardDescription className="mb-6">
-            Thank you! Your booking has been submitted successfully.
-          </CardDescription>
-          
-          {/* Next Steps Guide */}
-          <div className="bg-gray-50 rounded-lg p-4 text-left">
-            <h4 className="font-semibold text-gray-900 mb-3 text-center">What's Next?</h4>
-            <div className="space-y-2 text-sm text-gray-700">
-              <div className="flex items-start gap-2">
-                <span className="text-blue-500 font-medium">•</span>
-                <span><strong>Head to the store</strong> at your reserved time</span>
+      <AuroraBackground className="bg-white">
+        <motion.div
+          initial={{ opacity: 0.0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{
+            delay: 0.3,
+            duration: 0.8,
+            ease: "easeInOut",
+          }}
+          className="relative flex flex-col items-center justify-center px-4"
+        >
+          <Card className="max-w-xl mx-auto backdrop-blur-sm bg-white/90 shadow-xl border-0">
+            <CardContent className="py-6 text-center">
+              <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
+              <CardTitle className="text-xl mb-2">Reservation Complete!</CardTitle>
+              <CardDescription className="mb-6">
+                Thank you! Your booking has been submitted successfully.
+              </CardDescription>
+              
+              {/* Next Steps Guide */}
+              <div className="bg-gray-50/80 rounded-lg p-4 text-left backdrop-blur-sm">
+                <h4 className="font-semibold text-gray-900 mb-3 text-center">What's Next?</h4>
+                <div className="space-y-2 text-sm text-gray-700">
+                  <div className="flex items-start gap-2">
+                    <span className="text-blue-500 font-medium">•</span>
+                    <span><strong>Head to the store</strong> at your reserved time</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-blue-500 font-medium">•</span>
+                    <span><strong>Show your reservation details</strong> when you arrive</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-blue-500 font-medium">•</span>
+                    <span><strong>Get your free eye exam</strong> and prescription check</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-blue-500 font-medium">•</span>
+                    <span><strong>Need frames?</strong> Our team will help you find the perfect pair</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-blue-500 font-medium">•</span>
+                    <span><strong>Share your experience</strong> with a review after your visit</span>
+                  </div>
+                </div>
+                <p className="text-center text-gray-600 text-sm mt-4">See you soon!</p>
               </div>
-              <div className="flex items-start gap-2">
-                <span className="text-blue-500 font-medium">•</span>
-                <span><strong>Show your reservation details</strong> when you arrive</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="text-blue-500 font-medium">•</span>
-                <span><strong>Get your free eye exam</strong> and prescription check</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="text-blue-500 font-medium">•</span>
-                <span><strong>Need frames?</strong> Our team will help you find the perfect pair</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="text-blue-500 font-medium">•</span>
-                <span><strong>Share your experience</strong> with a review after your visit</span>
-              </div>
-            </div>
-            <p className="text-center text-gray-600 text-sm mt-4">See you soon!</p>
-          </div>
-        </CardContent>
-        <CardFooter className="justify-center">
-          <Button onClick={handleNewReservation}>Make Another Reservation</Button>
-        </CardFooter>
-      </Card>
+            </CardContent>
+            <CardFooter className="justify-center">
+              <Button onClick={handleNewReservation} className="bg-black hover:bg-gray-800 text-white">
+                Make Another Reservation
+              </Button>
+            </CardFooter>
+          </Card>
+        </motion.div>
+      </AuroraBackground>
     )
   }
 
