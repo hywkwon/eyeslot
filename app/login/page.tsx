@@ -274,7 +274,7 @@ export default function LoginPage() {
                 style={{ color: "#374151" }}
                 variants={itemVariants}
               >
-                Book high-quality lenses & eyewear services in Korea.
+                Book high-quality eyewear services in Korea.
               </motion.p>
             </motion.header>
 
