@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button"
 import { CalendarCheck } from "lucide-react"
 import { useRouter } from "next/navigation"
 import AuthWrapper from "@/components/auth-wrapper"
-import { SparklesText } from "@/components/ui/sparkles-text"
 
 export default function BookingFormPage() {
   const router = useRouter()
@@ -22,18 +21,21 @@ export default function BookingFormPage() {
               className="flex items-center gap-1"
             >
               <CalendarCheck className="h-4 w-4" />
-              <span>Check My Reservations</span>
+              <span>My Reservations</span>
             </Button>
           </div>
 
           <div className="text-center mb-8">
-            <SparklesText 
-              text="Book Your eyeslot" 
-              className="text-2xl md:text-3xl font-bold text-black mb-2"
-              colors={{ first: "#9E7AFF", second: "#FE8BBB" }}
-              sparklesCount={6}
-            />
-            <p className="text-gray-600 text-sm md:text-base">Schedule your visit to one of our eyepickup locations</p>
+            <h1 
+              className="font-bold text-black mb-4 leading-tight"
+              style={{ 
+                fontSize: '4rem',
+                lineHeight: '1.1'
+              }}
+            >
+              Book Your eyeslot
+            </h1>
+            <p className="text-gray-600 text-sm md:text-base">Schedule your visit to one of our partner locations</p>
           </div>
           <BookingForm />
         </div>

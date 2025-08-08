@@ -110,7 +110,7 @@ export default function LoginPage() {
         handle: "Japan",
         avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Yuki-Japan&backgroundColor=ffd5dc",
       },
-      text: "Beautiful design, fast service, and the Google Maps directions made it easy.",
+      text: "Beautiful design, fast service, and easy to find with the provided directions.",
     },
     {
       author: {
@@ -274,7 +274,7 @@ export default function LoginPage() {
                 style={{ color: "#374151" }}
                 variants={itemVariants}
               >
-                Reserve high-quality lens & eyewear in Korea.
+                Book high-quality lenses & eyewear services in Korea.
               </motion.p>
             </motion.header>
 
@@ -375,7 +375,7 @@ export default function LoginPage() {
                 by travelers worldwide
               </h2>
               <p className="text-sm max-w-[600px] font-medium sm:text-base" style={{ color: "#6b7280" }}>
-                Join thousands of travelers who have experienced premium eyewear service in Korea
+                Join thousands of travelers who have experienced our premium eyewear services in Korea
               </p>
             </div>
           </div>
@@ -397,7 +397,7 @@ export default function LoginPage() {
         animate={{ opacity: 1 }}
         transition={{ delay: 1.2 }}
       >
-        Stay tuned for more premium eyewear spots in Korea.
+        More premium eyewear locations coming soon in Korea.
       </motion.footer>
     </motion.div>
   )

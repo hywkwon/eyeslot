@@ -510,12 +510,12 @@ export default function BookingForm() {
           <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
           <CardTitle className="text-xl mb-2">Reservation Complete!</CardTitle>
           <CardDescription className="mb-6">
-            Thank you! Your booking has been submitted successfully. You will receive a confirmation email shortly.
+            Thank you! Your booking has been submitted successfully.
           </CardDescription>
           
           {/* Next Steps Guide */}
           <div className="bg-gray-50 rounded-lg p-4 text-left">
-            <h4 className="font-semibold text-gray-900 mb-3 text-center">Check as below</h4>
+            <h4 className="font-semibold text-gray-900 mb-3 text-center">What's Next?</h4>
             <div className="space-y-2 text-sm text-gray-700">
               <div className="flex items-start gap-2">
                 <span className="text-blue-500 font-medium">•</span>
@@ -523,7 +523,7 @@ export default function BookingForm() {
               </div>
               <div className="flex items-start gap-2">
                 <span className="text-blue-500 font-medium">•</span>
-                <span><strong>Show check my reservation page</strong> when you arrive</span>
+                <span><strong>Show your reservation details</strong> when you arrive</span>
               </div>
               <div className="flex items-start gap-2">
                 <span className="text-blue-500 font-medium">•</span>
@@ -552,7 +552,7 @@ export default function BookingForm() {
     <Card className="max-w-xl mx-auto">
       <CardHeader>
         <CardTitle>Make a Reservation</CardTitle>
-        <CardDescription>Please fill out the form below to book your appointment.</CardDescription>
+        <CardDescription>Please fill out the form below to book your visit.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {submitError && (

@@ -146,7 +146,7 @@ export default function BookingLookup() {
 
   const handleCancel = async (bookingId: string, visitDate: string) => {
     if (!isCancellationAllowed(visitDate)) {
-      alert("Cancellation is not allowed within 2 days of your reservation date.")
+      alert("Cancellation is not permitted within 2 days of your reservation date.")
       return
     }
 
@@ -177,7 +177,7 @@ export default function BookingLookup() {
   const handleDelete = async (bookingId: string, visitDate: string) => {
     // Only allow deletion for past bookings that cannot be cancelled
     if (isCancellationAllowed(visitDate)) {
-      alert("This reservation can still be cancelled. Please use the cancel button instead.")
+      alert("This reservation can still be cancelled. Please use the 'Cancel Reservation' button instead.")
       return
     }
 
@@ -330,7 +330,7 @@ export default function BookingLookup() {
     <Card className="max-w-xl mx-auto">
       <CardHeader>
         <CardTitle>My Reservations</CardTitle>
-        <CardDescription>Check your upcoming appointments</CardDescription>
+        <CardDescription>View and manage your reservations</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Cancellation Policy Notice */}
@@ -422,9 +422,9 @@ export default function BookingLookup() {
                   {/* Cancellation Status */}
                   <div className="mt-3 p-2 bg-gray-50 rounded-md">
                     {canCancel ? (
-                      <p className="text-xs text-green-600">✓ Cancellation allowed ({daysUntil} days remaining)</p>
+                      <p className="text-xs text-green-600">✓ Can be cancelled ({daysUntil} days remaining)</p>
                     ) : (
-                      <p className="text-xs text-red-600">✗ Cancellation not allowed (less than 2 days remaining)</p>
+                      <p className="text-xs text-red-600">✗ Cannot be cancelled (less than 2 days remaining)</p>
                     )}
                   </div>
 
@@ -551,7 +551,7 @@ export default function BookingLookup() {
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
         <Button variant="outline" className="w-full" onClick={() => router.push("/booking-form")}>
-          Back to Service Home
+          Back to Booking
         </Button>
         <p className="text-sm text-muted-foreground">Need help? Contact us at +82 10-9216-4660</p>
       </CardFooter>

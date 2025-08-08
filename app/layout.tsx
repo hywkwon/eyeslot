@@ -8,8 +8,8 @@ import HeaderSection from "@/components/header-section"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "eyeslot - Reserve high-quality lens & eyewear in Korea",
-  description: "Reserve high-quality lens & eyewear in Korea",
+  title: "eyeslot - Book high-quality lenses & eyewear services in Korea",
+  description: "Book high-quality lenses & eyewear services in Korea",
     generator: 'v0.dev'
 }
 
