@@ -507,61 +507,72 @@ export default function BookingForm() {
 
   if (submitted) {
     return (
-      <AuroraBackground className="bg-white">
-        <motion.div
-          initial={{ opacity: 0.0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{
-            delay: 0.3,
-            duration: 0.8,
-            ease: "easeInOut",
-          }}
-          className="relative flex flex-col items-center justify-center px-4"
-        >
-          <Card className="max-w-xl mx-auto backdrop-blur-sm bg-white/90 shadow-xl border-0">
-            <CardContent className="py-6 text-center">
-              <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
-              <CardTitle className="text-xl mb-2">Reservation Complete!</CardTitle>
-              <CardDescription className="mb-6">
-                Thank you! Your booking has been submitted successfully.
-              </CardDescription>
-              
-              {/* Next Steps Guide */}
-              <div className="bg-gray-50/80 rounded-lg p-4 text-left backdrop-blur-sm">
-                <h4 className="font-semibold text-gray-900 mb-3 text-center">What's Next?</h4>
-                <div className="space-y-2 text-sm text-gray-700">
-                  <div className="flex items-start gap-2">
-                    <span className="text-blue-500 font-medium">•</span>
-                    <span><strong>Head to the store</strong> at your reserved time</span>
+      <div className="fixed inset-0 z-50">
+        <AuroraBackground className="bg-white">
+          <motion.div
+            initial={{ opacity: 0.0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{
+              delay: 0.3,
+              duration: 0.8,
+              ease: "easeInOut",
+            }}
+            className="relative flex flex-col items-center justify-center px-4"
+          >
+            <Card className="max-w-xl mx-auto backdrop-blur-sm bg-white/95 shadow-2xl border border-white/20">
+              <CardContent className="py-8 text-center">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
+                >
+                  <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-6" />
+                </motion.div>
+                <CardTitle className="text-2xl mb-4 font-bold">Reservation Complete!</CardTitle>
+                <CardDescription className="mb-6 text-base">
+                  Thank you! Your booking has been submitted successfully.
+                </CardDescription>
+                
+                {/* Next Steps Guide */}
+                <div className="bg-gradient-to-br from-gray-50/90 to-white/90 rounded-xl p-6 text-left backdrop-blur-sm border border-white/30">
+                  <h4 className="font-bold text-gray-900 mb-4 text-center text-lg">What's Next?</h4>
+                  <div className="space-y-3 text-sm text-gray-700">
+                    <div className="flex items-start gap-3">
+                      <span className="text-blue-500 font-bold text-lg">•</span>
+                      <span><strong>Head to the store</strong> at your reserved time</span>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="text-blue-500 font-bold text-lg">•</span>
+                      <span><strong>Show your reservation details</strong> when you arrive</span>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="text-blue-500 font-bold text-lg">•</span>
+                      <span><strong>Get your free eye exam</strong> and prescription check</span>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="text-blue-500 font-bold text-lg">•</span>
+                      <span><strong>Need frames?</strong> Our team will help you find the perfect pair</span>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="text-blue-500 font-bold text-lg">•</span>
+                      <span><strong>Share your experience</strong> with a review after your visit</span>
+                    </div>
                   </div>
-                  <div className="flex items-start gap-2">
-                    <span className="text-blue-500 font-medium">•</span>
-                    <span><strong>Show your reservation details</strong> when you arrive</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="text-blue-500 font-medium">•</span>
-                    <span><strong>Get your free eye exam</strong> and prescription check</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="text-blue-500 font-medium">•</span>
-                    <span><strong>Need frames?</strong> Our team will help you find the perfect pair</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="text-blue-500 font-medium">•</span>
-                    <span><strong>Share your experience</strong> with a review after your visit</span>
-                  </div>
+                  <p className="text-center text-gray-600 text-base mt-6 font-medium">See you soon!</p>
                 </div>
-                <p className="text-center text-gray-600 text-sm mt-4">See you soon!</p>
-              </div>
-            </CardContent>
-            <CardFooter className="justify-center">
-              <Button onClick={handleNewReservation} className="bg-black hover:bg-gray-800 text-white">
-                Make Another Reservation
-              </Button>
-            </CardFooter>
-          </Card>
-        </motion.div>
-      </AuroraBackground>
+              </CardContent>
+              <CardFooter className="justify-center pb-8">
+                <Button 
+                  onClick={handleNewReservation} 
+                  className="bg-black hover:bg-gray-800 text-white px-8 py-3 text-base font-semibold transition-all duration-300 hover:scale-105"
+                >
+                  Make Another Reservation
+                </Button>
+              </CardFooter>
+            </Card>
+          </motion.div>
+        </AuroraBackground>
+      </div>
     )
   }
 
