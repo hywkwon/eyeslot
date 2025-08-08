@@ -29,7 +29,7 @@ export default function BookingFormPage() {
             <h1 
               className="font-bold text-black mb-4 leading-tight"
               style={{ 
-                fontSize: '4rem',
+                fontSize: '3rem',
                 lineHeight: '1.1'
               }}
             >
