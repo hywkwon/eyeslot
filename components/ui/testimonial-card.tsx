@@ -26,14 +26,16 @@ export function TestimonialCard({
     <Card
       {...(href ? { href } : {})}
       className={cn(
-        "flex flex-col rounded-lg border-t",
-        "bg-gradient-to-b from-muted/50 to-muted/10",
+        "flex flex-col rounded-lg border-t border-gray-200",
+        "bg-gradient-to-b from-gray-50/80 to-gray-100/50",
         "p-4 text-start sm:p-6",
-        "hover:from-muted/60 hover:to-muted/20",
-        "max-w-[380px] sm:max-w-[420px]",
+        "hover:from-gray-100/90 hover:to-gray-200/60",
+        "max-w-[320px] sm:max-w-[320px]",
         "transition-colors duration-300",
+        "text-gray-900 dark:text-gray-900",
         className
       )}
+      style={{ backgroundColor: "white", color: "black" }}
     >
       <div className="flex items-center gap-3">
         <Avatar className="h-12 w-12">
@@ -51,15 +53,15 @@ export function TestimonialCard({
           </AvatarFallback>
         </Avatar>
         <div className="flex flex-col items-start">
-          <h3 className="text-md font-semibold leading-none">
+          <h3 className="text-md font-semibold leading-none" style={{ color: "black" }}>
             {author.name}
           </h3>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-gray-600" style={{ color: "#6b7280" }}>
             {author.handle}
           </p>
         </div>
       </div>
-      <p className="sm:text-md mt-4 text-sm text-muted-foreground">
+      <p className="sm:text-md mt-4 text-sm text-gray-600" style={{ color: "#6b7280" }}>
         {text}
       </p>
     </Card>

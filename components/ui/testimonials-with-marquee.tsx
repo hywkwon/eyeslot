@@ -25,28 +25,28 @@ export function TestimonialsSection({
 
   return (
     <section className={cn(
-      "bg-background text-foreground",
+      "bg-white text-black",
       "py-12 sm:py-24 md:py-32 px-0",
       className
-    )}>
-      <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 text-center sm:gap-16">
+    )} style={{ backgroundColor: "white", color: "black" }}>
+      <div className="mx-auto flex w-full max-w-none flex-col items-center gap-4 text-center sm:gap-16">
         {/* 제목과 설명이 있을 때만 표시 */}
         {(title || description) && (
           <div className="flex flex-col items-center gap-4 px-4 sm:gap-8">
             {title && (
-              <h2 className="max-w-[720px] text-3xl font-semibold leading-tight sm:text-5xl sm:leading-tight">
+              <h2 className="max-w-[720px] text-3xl font-semibold leading-tight sm:text-5xl sm:leading-tight" style={{ color: "black" }}>
                 {title}
               </h2>
             )}
             {description && (
-              <p className="text-md max-w-[600px] font-medium text-muted-foreground sm:text-xl">
+              <p className="text-md max-w-[600px] font-medium text-gray-600 sm:text-xl" style={{ color: "#6b7280" }}>
                 {description}
               </p>
             )}
           </div>
         )}
 
-        <div className="relative flex w-full flex-col items-center justify-center overflow-hidden px-4">
+        <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
           <div 
             className="group flex overflow-hidden p-2 [--gap:1.5rem] [gap:var(--gap)] flex-row [--duration:120s]"
             onMouseEnter={() => setIsPaused(true)}
