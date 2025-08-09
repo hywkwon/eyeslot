@@ -30,7 +30,7 @@ export function TestimonialCard({
         "bg-gradient-to-b from-muted/50 to-muted/10",
         "p-4 text-start sm:p-6",
         "hover:from-muted/60 hover:to-muted/20",
-        "max-w-[320px] sm:max-w-[320px]",
+        "max-w-[380px] sm:max-w-[420px]",
         "transition-colors duration-300",
         className
       )}

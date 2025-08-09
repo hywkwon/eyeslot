@@ -29,7 +29,7 @@ export function TestimonialsSection({
       "py-12 sm:py-24 md:py-32 px-0",
       className
     )}>
-      <div className="mx-auto flex max-w-container flex-col items-center gap-4 text-center sm:gap-16">
+      <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 text-center sm:gap-16">
         {/* 제목과 설명이 있을 때만 표시 */}
         {(title || description) && (
           <div className="flex flex-col items-center gap-4 px-4 sm:gap-8">
@@ -46,9 +46,9 @@ export function TestimonialsSection({
           </div>
         )}
 
-        <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
+        <div className="relative flex w-full flex-col items-center justify-center overflow-hidden px-4">
           <div 
-            className="group flex overflow-hidden p-2 [--gap:1rem] [gap:var(--gap)] flex-row [--duration:120s]"
+            className="group flex overflow-hidden p-2 [--gap:1.5rem] [gap:var(--gap)] flex-row [--duration:120s]"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
             onTouchStart={() => setIsPaused(true)}
