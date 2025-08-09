@@ -381,7 +381,7 @@ export default function LoginPage() {
           </div>
 
           {/* Testimonials */}
-          <TestimonialsSection title="" description="" testimonials={testimonials} className="py-0 sm:py-4 md:py-8" />
+          <TestimonialsSection title="" description="" testimonials={testimonials} className="py-0 sm:py-4 md:py-8 w-full max-w-none px-0" />
         </motion.div>
         {/* 사용자 저장 백업 컴포넌트 */}
         <UserSaveBackup />

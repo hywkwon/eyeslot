@@ -25,10 +25,10 @@ export function TestimonialsSection({
 
   return (
     <section className={cn(
-      "bg-white text-black",
+      "bg-white text-black w-full",
       "py-12 sm:py-24 md:py-32 px-0",
       className
-    )} style={{ backgroundColor: "white", color: "black" }}>
+    )} style={{ backgroundColor: "white", color: "black", width: "100vw", marginLeft: "calc(-50vw + 50%)" }}>
       <div className="mx-auto flex w-full max-w-none flex-col items-center gap-4 text-center sm:gap-16">
         {/* 제목과 설명이 있을 때만 표시 */}
         {(title || description) && (
@@ -46,9 +46,9 @@ export function TestimonialsSection({
           </div>
         )}
 
-        <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
+        <div className="relative flex w-full flex-col items-center justify-center overflow-hidden" style={{ width: "100%" }}>
           <div 
-            className="group flex overflow-hidden p-2 [--gap:1.5rem] [gap:var(--gap)] flex-row [--duration:120s]"
+            className="group flex overflow-hidden p-2 [--gap:2rem] [gap:var(--gap)] flex-row [--duration:120s] w-full"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
             onTouchStart={() => setIsPaused(true)}
@@ -83,8 +83,8 @@ export function TestimonialsSection({
             </div>
           </div>
 
-          <div className="pointer-events-none absolute inset-y-0 left-0 hidden w-1/3 bg-gradient-to-r from-background sm:block" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/3 bg-gradient-to-l from-background sm:block" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 hidden w-1/6 bg-gradient-to-r from-white sm:block" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/6 bg-gradient-to-l from-white sm:block" />
         </div>
       </div>
     </section>
