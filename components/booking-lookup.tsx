@@ -123,15 +123,27 @@ export default function BookingLookup() {
         setBookings([])
       } else if (Array.isArray(result.data)) {
         const bookingsData = result.data
-        setBookings(bookingsData)
+        // Sort by visit_date in ascending order (earliest first)
+        const sortedBookings = bookingsData.sort((a, b) => {
+          const dateA = new Date(`${a.visit_date} ${a.visit_time}`)
+          const dateB = new Date(`${b.visit_date} ${b.visit_time}`)
+          return dateA.getTime() - dateB.getTime()
+        })
+        setBookings(sortedBookings)
         
         // Load existing reviews for each booking
-        await loadExistingReviews(bookingsData)
+        await loadExistingReviews(sortedBookings)
       } else if (Array.isArray(result)) {
-        setBookings(result)
+        // Sort by visit_date in ascending order (earliest first)
+        const sortedBookings = result.sort((a, b) => {
+          const dateA = new Date(`${a.visit_date} ${a.visit_time}`)
+          const dateB = new Date(`${b.visit_date} ${b.visit_time}`)
+          return dateA.getTime() - dateB.getTime()
+        })
+        setBookings(sortedBookings)
         
         // Load existing reviews for each booking
-        await loadExistingReviews(result)
+        await loadExistingReviews(sortedBookings)
       } else {
         setBookings([])
         setError("No reservations found.")
