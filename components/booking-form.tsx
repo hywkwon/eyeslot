@@ -909,7 +909,7 @@ export default function BookingForm() {
               onClick={() => setShowPrescriptionForm(!showPrescriptionForm)}
               className="text-xs"
             >
-              {showPrescriptionForm ? 'Hide' : 'Add Prescription'}
+              {showPrescriptionForm ? 'Hide' : 'Add'}
             </Button>
           </div>
 
