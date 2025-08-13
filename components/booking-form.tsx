@@ -919,27 +919,32 @@ export default function BookingForm() {
 
           {/* My Saved Prescriptions */}
           {savedPrescriptions.length > 0 && !showPrescriptionForm && (
-            <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+            <div className="bg-gray-50 rounded-lg p-3 md:p-4 space-y-2 md:space-y-3">
               <h4 className="font-medium text-sm">My Saved Prescriptions</h4>
               <div className="space-y-2">
                 {savedPrescriptions.map((prescription) => (
                   <div 
                     key={prescription.id} 
-                    className={`bg-white rounded-md p-3 border transition-all ${
+                    className={`bg-white rounded-md p-2 md:p-3 border transition-all ${
                       selectedPrescription?.id === prescription.id 
                         ? 'border-green-300 bg-green-50' 
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <div>
-                        <span className="font-medium text-sm">{prescription.name}</span>
-                        <span className="text-xs text-gray-500 ml-2">({prescription.powerType})</span>
-                        {selectedPrescription?.id === prescription.id && (
-                          <span className="text-xs text-green-600 ml-2 font-medium">✓ Selected</span>
-                        )}
+                    <div className="flex items-start justify-between mb-1 md:mb-2 gap-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1 flex-wrap">
+                          <span className="font-medium text-sm truncate">{prescription.name}</span>
+                          <span className="text-xs text-gray-500 shrink-0">({prescription.powerType})</span>
+                          {selectedPrescription?.id === prescription.id && (
+                            <span className="text-xs text-green-600 font-medium hidden md:inline shrink-0">✓ Selected</span>
+                          )}
+                        </div>
+                        <div className="text-xs text-gray-600 mt-1 md:mt-0 md:hidden">
+                          {prescription.savedDate}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-0.5 md:gap-1 shrink-0">
                         <Button
                           type="button"
                           size="sm"
@@ -951,7 +956,7 @@ export default function BookingForm() {
                               usePrescription(prescription)
                             }
                           }}
-                          className={`text-xs px-2 py-1 ${
+                          className={`text-xs px-1.5 py-1 md:px-2 h-7 ${
                             selectedPrescription?.id === prescription.id
                               ? 'bg-green-100 border-green-300 text-green-700'
                               : 'hover:bg-blue-50'
@@ -964,7 +969,7 @@ export default function BookingForm() {
                           size="sm"
                           variant="outline"
                           onClick={() => startEditPrescription(prescription)}
-                          className="text-xs px-2 py-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                          className="text-xs px-1.5 py-1 md:px-2 h-7 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                         >
                           Edit
                         </Button>
@@ -973,13 +978,13 @@ export default function BookingForm() {
                           size="sm"
                           variant="ghost"
                           onClick={() => deletePrescription(prescription.id)}
-                          className="text-xs p-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full"
+                          className="text-xs p-1 h-7 w-7 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full"
                         >
                           <X className="w-3 h-3" />
                         </Button>
                       </div>
                     </div>
-                    <div className="text-xs text-gray-600">
+                    <div className="text-xs text-gray-600 hidden md:block">
                       Saved: {prescription.savedDate}
                     </div>
                   </div>
