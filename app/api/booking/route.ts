@@ -73,7 +73,9 @@ export async function POST(req: Request) {
           request_note,
           store_id,
           status: "BOOKED",
-          prescription: prescription || null,
+          lens_type: prescription ? (prescription.powerType || '') : '',
+          right_eye: prescription ? `${prescription.rightEye.spherical || ''},${prescription.rightEye.cylindrical || ''},${prescription.rightEye.axis || ''}` : '',
+          left_eye: prescription ? `${prescription.leftEye.spherical || ''},${prescription.leftEye.cylindrical || ''},${prescription.leftEye.axis || ''}` : '',
         }),
       });
     } catch (err) {
@@ -171,7 +173,9 @@ export async function DELETE(req: Request) {
           request_note: booking.request_note,
           store_id: booking.store_id,
           status: "CANCELLED",
-          prescription: booking.prescription || null,
+          lens_type: booking.prescription ? (booking.prescription.powerType || '') : '',
+          right_eye: booking.prescription ? `${booking.prescription.rightEye.spherical || ''},${booking.prescription.rightEye.cylindrical || ''},${booking.prescription.rightEye.axis || ''}` : '',
+          left_eye: booking.prescription ? `${booking.prescription.leftEye.spherical || ''},${booking.prescription.leftEye.cylindrical || ''},${booking.prescription.leftEye.axis || ''}` : '',
         }),
       });
     } catch (err) {
