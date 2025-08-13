@@ -28,6 +28,8 @@ interface PrescriptionData {
 }
 
 interface SavedPrescription {
+  id: string
+  name: string
   powerType: string
   prescription: PrescriptionData
   savedDate: string
@@ -82,10 +84,10 @@ export default function BookingForm() {
   
   // Prescription states
   const [showPrescriptionForm, setShowPrescriptionForm] = useState(false)
-  const [savedPrescription, setSavedPrescription] = useState<SavedPrescription | null>(null)
-  const [isUsingPrescription, setIsUsingPrescription] = useState(false)
+  const [savedPrescriptions, setSavedPrescriptions] = useState<SavedPrescription[]>([])
+  const [selectedPrescription, setSelectedPrescription] = useState<SavedPrescription | null>(null)
 
-  // Auto-fill user data from session and load saved prescription
+  // Auto-fill user data from session and load saved prescriptions
   useEffect(() => {
     if (session?.user) {
       setForm(prev => ({
@@ -94,70 +96,79 @@ export default function BookingForm() {
         user_name: session.user.name || "",
       }))
       
-      // Load saved prescription from localStorage
-      loadSavedPrescription()
+      // Load saved prescriptions from localStorage
+      loadSavedPrescriptions()
     }
   }, [session])
 
-  // Load saved prescription from localStorage (one per user)
-  const loadSavedPrescription = () => {
+  // Load saved prescriptions from localStorage (multiple per user)
+  const loadSavedPrescriptions = () => {
     try {
       const userEmail = session?.user?.email
       if (userEmail) {
-        const saved = localStorage.getItem(`prescription_${userEmail}`)
+        const saved = localStorage.getItem(`prescriptions_${userEmail}`)
         if (saved) {
-          setSavedPrescription(JSON.parse(saved))
+          setSavedPrescriptions(JSON.parse(saved))
         }
       }
     } catch (error) {
-      console.error('Failed to load saved prescription:', error)
+      console.error('Failed to load saved prescriptions:', error)
     }
   }
 
-  // Save prescription to localStorage (one per user - overwrite)
-  const savePrescription = (powerType: string) => {
+  // Save prescription to localStorage (multiple per user)
+  const savePrescription = (name: string, powerType: string) => {
     if (!form.prescription) return
 
     const userEmail = session?.user?.email
     if (!userEmail) return
 
     const newPrescription: SavedPrescription = {
+      id: Date.now().toString(),
+      name,
       powerType,
       prescription: form.prescription,
       savedDate: new Date().toISOString().split('T')[0]
     }
 
-    setSavedPrescription(newPrescription)
-    localStorage.setItem(`prescription_${userEmail}`, JSON.stringify(newPrescription))
-    setIsUsingPrescription(true)
+    const updatedPrescriptions = [...savedPrescriptions, newPrescription]
+    setSavedPrescriptions(updatedPrescriptions)
+    localStorage.setItem(`prescriptions_${userEmail}`, JSON.stringify(updatedPrescriptions))
   }
 
-  // Load saved prescription and auto-expand form
-  const loadPrescription = () => {
-    if (savedPrescription) {
-      setForm(prev => ({
-        ...prev,
-        prescription: savedPrescription.prescription
-      }))
-      setIsUsingPrescription(true)
-      setShowPrescriptionForm(true) // Auto-expand form
-    }
+  // Use selected prescription
+  const usePrescription = (prescription: SavedPrescription) => {
+    setSelectedPrescription(prescription)
+    setForm(prev => ({
+      ...prev,
+      prescription: prescription.prescription
+    }))
   }
 
-  // Clear saved prescription
-  const clearPrescription = () => {
+  // Clear selected prescription
+  const clearSelectedPrescription = () => {
+    setSelectedPrescription(null)
+    setForm(prev => ({
+      ...prev,
+      prescription: {
+        rightEye: { spherical: "", cylindrical: "", axis: "" },
+        leftEye: { spherical: "", cylindrical: "", axis: "" }
+      }
+    }))
+  }
+
+  // Delete saved prescription
+  const deletePrescription = (id: string) => {
     const userEmail = session?.user?.email
-    if (userEmail) {
-      setSavedPrescription(null)
-      localStorage.removeItem(`prescription_${userEmail}`)
-      setIsUsingPrescription(false)
-      setForm(prev => ({
-        ...prev,
-        prescription: {
-          rightEye: { spherical: "", cylindrical: "", axis: "" },
-          leftEye: { spherical: "", cylindrical: "", axis: "" }
-        }
-      }))
+    if (!userEmail) return
+
+    const updatedPrescriptions = savedPrescriptions.filter(p => p.id !== id)
+    setSavedPrescriptions(updatedPrescriptions)
+    localStorage.setItem(`prescriptions_${userEmail}`, JSON.stringify(updatedPrescriptions))
+
+    // If deleted prescription was selected, clear selection
+    if (selectedPrescription && selectedPrescription.id === id) {
+      clearSelectedPrescription()
     }
   }
 
@@ -616,7 +627,7 @@ export default function BookingForm() {
     setErrors({})
     setSubmitError("")
     setShowPrescriptionForm(false)
-    setIsUsingPrescription(false)
+    setSelectedPrescription(null)
   }
 
   if (submitted) {
@@ -841,85 +852,95 @@ export default function BookingForm() {
         <div className="space-y-4 border-t pt-4">
           <div className="flex items-center justify-between">
             <Label className="text-base font-semibold">Lens Prescription (Optional)</Label>
-            <div className="flex gap-2">
-              {savedPrescription && !showPrescriptionForm && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={loadPrescription}
-                  className="text-xs"
-                >
-                  My saved
-                </Button>
-              )}
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => setShowPrescriptionForm(!showPrescriptionForm)}
-                className="text-xs"
-              >
-                {showPrescriptionForm ? 'Hide' : 'Add Prescription'}
-              </Button>
-            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setShowPrescriptionForm(!showPrescriptionForm)}
+              className="text-xs"
+            >
+              {showPrescriptionForm ? 'Hide' : 'Add Prescription'}
+            </Button>
           </div>
 
-          {/* Saved Prescription Info */}
-          {savedPrescription && !showPrescriptionForm && (
-            <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+          {/* Selected Prescription Display */}
+          {selectedPrescription && (
+            <div className="bg-green-50 rounded-lg p-3 border border-green-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-sm font-medium text-blue-800">
-                    Saved Prescription: {savedPrescription.powerType}
+                  <span className="text-sm font-medium text-green-800">
+                    ✓ Using: {selectedPrescription.name}
                   </span>
-                  <span className="text-xs text-blue-600 ml-2">
-                    (Saved: {savedPrescription.savedDate})
+                  <span className="text-xs text-green-600 ml-2">
+                    ({selectedPrescription.powerType})
                   </span>
                 </div>
                 <Button
                   type="button"
                   size="sm"
                   variant="outline"
-                  onClick={clearPrescription}
+                  onClick={clearSelectedPrescription}
                   className="text-xs px-2 py-1 text-red-600 hover:text-red-700 border-red-300"
                 >
-                  Delete
+                  Clear
                 </Button>
               </div>
             </div>
           )}
 
-          {/* Currently Using Prescription Display */}
-          {isUsingPrescription && (
-            <div className="bg-green-50 rounded-lg p-3 border border-green-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-sm font-medium text-green-800">
-                    ✓ Using My Prescription
-                  </span>
-                  <span className="text-xs text-green-600 ml-2">
-                    (Values loaded in form below)
-                  </span>
-                </div>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    setIsUsingPrescription(false)
-                    setForm(prev => ({
-                      ...prev,
-                      prescription: {
-                        rightEye: { spherical: "", cylindrical: "", axis: "" },
-                        leftEye: { spherical: "", cylindrical: "", axis: "" }
-                      }
-                    }))
-                  }}
-                  className="text-xs px-2 py-1 text-red-600 hover:text-red-700 border-red-300"
-                >
-                  Clear
-                </Button>
+          {/* My Saved Prescriptions */}
+          {savedPrescriptions.length > 0 && !showPrescriptionForm && (
+            <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+              <h4 className="font-medium text-sm">My Saved Prescriptions</h4>
+              <div className="space-y-2">
+                {savedPrescriptions.map((prescription) => (
+                  <div 
+                    key={prescription.id} 
+                    className={`bg-white rounded-md p-3 border transition-all ${
+                      selectedPrescription?.id === prescription.id 
+                        ? 'border-green-300 bg-green-50' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div>
+                        <span className="font-medium text-sm">{prescription.name}</span>
+                        <span className="text-xs text-gray-500 ml-2">({prescription.powerType})</span>
+                        {selectedPrescription?.id === prescription.id && (
+                          <span className="text-xs text-green-600 ml-2 font-medium">✓ Selected</span>
+                        )}
+                      </div>
+                      <div className="flex gap-1">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => usePrescription(prescription)}
+                          className={`text-xs px-2 py-1 ${
+                            selectedPrescription?.id === prescription.id
+                              ? 'bg-green-100 border-green-300 text-green-700'
+                              : 'hover:bg-blue-50'
+                          }`}
+                          disabled={selectedPrescription?.id === prescription.id}
+                        >
+                          {selectedPrescription?.id === prescription.id ? 'In Use' : 'Use'}
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => deletePrescription(prescription.id)}
+                          className="text-xs px-2 py-1 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="text-xs text-gray-600">
+                      Saved: {prescription.savedDate}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -1011,15 +1032,25 @@ export default function BookingForm() {
 
               {/* Save Prescription */}
               <div className="space-y-3 pt-3 border-t border-gray-200">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Label className="text-sm font-medium text-gray-700">
-                      Lens Type:
+                <div className="flex gap-3">
+                  <div className="flex-1">
+                    <Label htmlFor="prescriptionName" className="text-sm font-medium text-gray-700 mb-1 block">
+                      Prescription name
+                    </Label>
+                    <Input
+                      id="prescriptionName"
+                      placeholder="My glasses prescription"
+                      className="text-sm"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700 mb-1 block">
+                      Lens Type
                     </Label>
                     <select
-                      className="border rounded-md pl-3 pr-10 py-2 text-sm appearance-none bg-white"
+                      className="border rounded-md pl-3 pr-10 py-2 text-sm appearance-none bg-white h-10"
                       id="powerType"
-                      defaultValue={savedPrescription?.powerType || "SINGLE_VISION"}
+                      defaultValue="SINGLE_VISION"
                       style={{
                         backgroundImage: "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e\")",
                         backgroundPosition: "right 0.5rem center",
@@ -1033,19 +1064,25 @@ export default function BookingForm() {
                       <option value="BIFOCAL">Bifocal</option>
                     </select>
                   </div>
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={() => {
-                      const powerTypeSelect = document.getElementById('powerType') as HTMLSelectElement
-                      savePrescription(powerTypeSelect.value)
-                      alert(savedPrescription ? 'Prescription updated!' : 'Prescription saved!')
-                    }}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4"
-                  >
-                    {savedPrescription ? 'Update' : 'Save'} Prescription
-                  </Button>
                 </div>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => {
+                    const nameInput = document.getElementById('prescriptionName') as HTMLInputElement
+                    const powerTypeSelect = document.getElementById('powerType') as HTMLSelectElement
+                    if (nameInput.value.trim()) {
+                      savePrescription(nameInput.value.trim(), powerTypeSelect.value)
+                      nameInput.value = ''
+                      alert('Prescription saved!')
+                    } else {
+                      alert('Please enter a prescription name')
+                    }
+                  }}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  Save My Prescription
+                </Button>
               </div>
             </div>
           )}
