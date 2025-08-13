@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, CheckCircle, ExternalLink } from "lucide-react"
+import { Loader2, CheckCircle, ExternalLink, X, Edit } from "lucide-react"
 import { submitBooking } from "@/lib/actions"
 import { AuroraBackground } from "@/components/ui/aurora-background"
 import { motion } from "framer-motion"
@@ -86,6 +86,7 @@ export default function BookingForm() {
   const [showPrescriptionForm, setShowPrescriptionForm] = useState(false)
   const [savedPrescriptions, setSavedPrescriptions] = useState<SavedPrescription[]>([])
   const [selectedPrescription, setSelectedPrescription] = useState<SavedPrescription | null>(null)
+  const [editingPrescriptionId, setEditingPrescriptionId] = useState<string | null>(null)
 
   // Auto-fill user data from session and load saved prescriptions
   useEffect(() => {
@@ -105,36 +106,26 @@ export default function BookingForm() {
   const loadSavedPrescriptions = () => {
     try {
       const userEmail = session?.user?.email
+      console.log('🔍 Loading prescriptions for email:', userEmail)
       if (userEmail) {
-        const saved = localStorage.getItem(`prescriptions_${userEmail}`)
+        const storageKey = `prescriptions_${userEmail}`
+        const saved = localStorage.getItem(storageKey)
+        console.log('📦 Retrieved from localStorage:', saved)
         if (saved) {
-          setSavedPrescriptions(JSON.parse(saved))
+          const parsedPrescriptions = JSON.parse(saved)
+          console.log('✅ Parsed prescriptions:', parsedPrescriptions)
+          setSavedPrescriptions(parsedPrescriptions)
+        } else {
+          console.log('❌ No saved prescriptions found')
         }
+      } else {
+        console.log('❌ No user email found')
       }
     } catch (error) {
       console.error('Failed to load saved prescriptions:', error)
     }
   }
 
-  // Save prescription to localStorage (multiple per user)
-  const savePrescription = (name: string, powerType: string) => {
-    if (!form.prescription) return
-
-    const userEmail = session?.user?.email
-    if (!userEmail) return
-
-    const newPrescription: SavedPrescription = {
-      id: Date.now().toString(),
-      name,
-      powerType,
-      prescription: form.prescription,
-      savedDate: new Date().toISOString().split('T')[0]
-    }
-
-    const updatedPrescriptions = [...savedPrescriptions, newPrescription]
-    setSavedPrescriptions(updatedPrescriptions)
-    localStorage.setItem(`prescriptions_${userEmail}`, JSON.stringify(updatedPrescriptions))
-  }
 
   // Use selected prescription
   const usePrescription = (prescription: SavedPrescription) => {
@@ -169,6 +160,65 @@ export default function BookingForm() {
     // If deleted prescription was selected, clear selection
     if (selectedPrescription && selectedPrescription.id === id) {
       clearSelectedPrescription()
+    }
+  }
+
+  // Edit prescription functions
+  const startEditPrescription = (prescription: SavedPrescription) => {
+    setEditingPrescriptionId(prescription.id)
+    // Load prescription data into form for editing
+    setForm(prev => ({
+      ...prev,
+      prescription: prescription.prescription
+    }))
+    setShowPrescriptionForm(true)
+  }
+
+  const updatePrescription = (id: string, name: string, powerType: string) => {
+    if (!form.prescription) return
+
+    const userEmail = session?.user?.email
+    if (!userEmail) return
+
+    const updatedPrescriptions = savedPrescriptions.map(p => 
+      p.id === id 
+        ? {
+            ...p,
+            name,
+            powerType,
+            prescription: form.prescription,
+            savedDate: new Date().toISOString().split('T')[0]
+          }
+        : p
+    )
+    
+    setSavedPrescriptions(updatedPrescriptions)
+    localStorage.setItem(`prescriptions_${userEmail}`, JSON.stringify(updatedPrescriptions))
+    
+    // Update selected prescription if it's the one being edited
+    if (selectedPrescription && selectedPrescription.id === id) {
+      const updatedSelected = updatedPrescriptions.find(p => p.id === id)
+      if (updatedSelected) {
+        setSelectedPrescription(updatedSelected)
+      }
+    }
+    
+    setEditingPrescriptionId(null)
+    setShowPrescriptionForm(false)
+  }
+
+  const cancelEdit = () => {
+    setEditingPrescriptionId(null)
+    setShowPrescriptionForm(false)
+    // Clear form if we were editing
+    if (editingPrescriptionId) {
+      setForm(prev => ({
+        ...prev,
+        prescription: selectedPrescription?.prescription || {
+          rightEye: { spherical: "", cylindrical: "", axis: "" },
+          leftEye: { spherical: "", cylindrical: "", axis: "" }
+        }
+      }))
     }
   }
 
@@ -863,30 +913,6 @@ export default function BookingForm() {
             </Button>
           </div>
 
-          {/* Selected Prescription Display */}
-          {selectedPrescription && (
-            <div className="bg-green-50 rounded-lg p-3 border border-green-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-sm font-medium text-green-800">
-                    ✓ Using: {selectedPrescription.name}
-                  </span>
-                  <span className="text-xs text-green-600 ml-2">
-                    ({selectedPrescription.powerType})
-                  </span>
-                </div>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={clearSelectedPrescription}
-                  className="text-xs px-2 py-1 text-red-600 hover:text-red-700 border-red-300"
-                >
-                  Clear
-                </Button>
-              </div>
-            </div>
-          )}
 
           {/* My Saved Prescriptions */}
           {savedPrescriptions.length > 0 && !showPrescriptionForm && (
@@ -910,29 +936,44 @@ export default function BookingForm() {
                           <span className="text-xs text-green-600 ml-2 font-medium">✓ Selected</span>
                         )}
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex items-center gap-1">
                         <Button
                           type="button"
                           size="sm"
                           variant="outline"
-                          onClick={() => usePrescription(prescription)}
+                          onClick={() => {
+                            if (selectedPrescription?.id === prescription.id) {
+                              clearSelectedPrescription()
+                            } else {
+                              usePrescription(prescription)
+                            }
+                          }}
                           className={`text-xs px-2 py-1 ${
                             selectedPrescription?.id === prescription.id
                               ? 'bg-green-100 border-green-300 text-green-700'
                               : 'hover:bg-blue-50'
                           }`}
-                          disabled={selectedPrescription?.id === prescription.id}
                         >
-                          {selectedPrescription?.id === prescription.id ? 'In Use' : 'Use'}
+                          {selectedPrescription?.id === prescription.id ? 'Clear' : 'Use'}
                         </Button>
                         <Button
                           type="button"
                           size="sm"
                           variant="outline"
-                          onClick={() => deletePrescription(prescription.id)}
-                          className="text-xs px-2 py-1 text-red-600 hover:text-red-700 hover:bg-red-50"
+                          onClick={() => startEditPrescription(prescription)}
+                          className="text-xs px-2 py-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                         >
-                          Delete
+                          <Edit className="w-3 h-3 mr-1" />
+                          Edit
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => deletePrescription(prescription.id)}
+                          className="text-xs p-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full"
+                        >
+                          <X className="w-3 h-3" />
                         </Button>
                       </div>
                     </div>
@@ -952,136 +993,183 @@ export default function BookingForm() {
                 <h4 className="font-medium text-sm">Enter Your Prescription</h4>
               </div>
               
-              {/* Prescription Table */}
-              <div className="bg-white rounded-md border border-gray-200 overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead className="bg-gray-600 text-white">
-                    <tr>
-                      <th className="py-3 px-4 text-left font-medium">EYE</th>
-                      <th className="py-3 px-4 text-center font-medium">RIGHT</th>
-                      <th className="py-3 px-4 text-center font-medium">LEFT</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-b border-gray-200">
-                      <td className="py-3 px-4 bg-gray-600 text-white font-medium">Spherical</td>
-                      <td className="py-2 px-4">
-                        <Input
-                          type="text"
-                          placeholder="-2.50"
-                          value={form.prescription?.rightEye.spherical || ''}
-                          onChange={(e) => handlePrescriptionChange('rightEye', 'spherical', e.target.value)}
-                          className="text-center text-sm border-gray-300"
-                        />
-                      </td>
-                      <td className="py-2 px-4">
-                        <Input
-                          type="text"
-                          placeholder="-2.00"
-                          value={form.prescription?.leftEye.spherical || ''}
-                          onChange={(e) => handlePrescriptionChange('leftEye', 'spherical', e.target.value)}
-                          className="text-center text-sm border-gray-300"
-                        />
-                      </td>
-                    </tr>
-                    <tr className="border-b border-gray-200">
-                      <td className="py-3 px-4 bg-gray-600 text-white font-medium">Cylindrical</td>
-                      <td className="py-2 px-4">
-                        <Input
-                          type="text"
-                          placeholder="-2.00"
-                          value={form.prescription?.rightEye.cylindrical || ''}
-                          onChange={(e) => handlePrescriptionChange('rightEye', 'cylindrical', e.target.value)}
-                          className="text-center text-sm border-gray-300"
-                        />
-                      </td>
-                      <td className="py-2 px-4">
-                        <Input
-                          type="text"
-                          placeholder="-2.75"
-                          value={form.prescription?.leftEye.cylindrical || ''}
-                          onChange={(e) => handlePrescriptionChange('leftEye', 'cylindrical', e.target.value)}
-                          className="text-center text-sm border-gray-300"
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="py-3 px-4 bg-gray-600 text-white font-medium">Axis</td>
-                      <td className="py-2 px-4">
-                        <Input
-                          type="text"
-                          placeholder="175"
-                          value={form.prescription?.rightEye.axis || ''}
-                          onChange={(e) => handlePrescriptionChange('rightEye', 'axis', e.target.value)}
-                          className="text-center text-sm border-gray-300"
-                        />
-                      </td>
-                      <td className="py-2 px-4">
-                        <Input
-                          type="text"
-                          placeholder="10"
-                          value={form.prescription?.leftEye.axis || ''}
-                          onChange={(e) => handlePrescriptionChange('leftEye', 'axis', e.target.value)}
-                          className="text-center text-sm border-gray-300"
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+              {/* Prescription Input - Mobile Optimized */}
+              <div className="space-y-3">
+                {/* Right Eye */}
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <h4 className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Right Eye</h4>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <Label className="text-xs text-gray-600 mb-1 block">Spherical</Label>
+                      <Input
+                        type="text"
+                        placeholder="-2.50"
+                        value={form.prescription?.rightEye.spherical || ''}
+                        onChange={(e) => handlePrescriptionChange('rightEye', 'spherical', e.target.value)}
+                        className="text-center text-xs h-8"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs text-gray-600 mb-1 block">Cylindrical</Label>
+                      <Input
+                        type="text"
+                        placeholder="-2.00"
+                        value={form.prescription?.rightEye.cylindrical || ''}
+                        onChange={(e) => handlePrescriptionChange('rightEye', 'cylindrical', e.target.value)}
+                        className="text-center text-xs h-8"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs text-gray-600 mb-1 block">Axis</Label>
+                      <Input
+                        type="text"
+                        placeholder="175"
+                        value={form.prescription?.rightEye.axis || ''}
+                        onChange={(e) => handlePrescriptionChange('rightEye', 'axis', e.target.value)}
+                        className="text-center text-xs h-8"
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Left Eye */}
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <h4 className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Left Eye</h4>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <Label className="text-xs text-gray-600 mb-1 block">Spherical</Label>
+                      <Input
+                        type="text"
+                        placeholder="-2.00"
+                        value={form.prescription?.leftEye.spherical || ''}
+                        onChange={(e) => handlePrescriptionChange('leftEye', 'spherical', e.target.value)}
+                        className="text-center text-xs h-8"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs text-gray-600 mb-1 block">Cylindrical</Label>
+                      <Input
+                        type="text"
+                        placeholder="-2.75"
+                        value={form.prescription?.leftEye.cylindrical || ''}
+                        onChange={(e) => handlePrescriptionChange('leftEye', 'cylindrical', e.target.value)}
+                        className="text-center text-xs h-8"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs text-gray-600 mb-1 block">Axis</Label>
+                      <Input
+                        type="text"
+                        placeholder="10"
+                        value={form.prescription?.leftEye.axis || ''}
+                        onChange={(e) => handlePrescriptionChange('leftEye', 'axis', e.target.value)}
+                        className="text-center text-xs h-8"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Save Prescription */}
               <div className="pt-3 border-t border-gray-200">
-                <div className="flex gap-2 items-end">
-                  <div className="flex-1">
-                    <Label htmlFor="prescriptionName" className="text-sm font-medium text-gray-700 mb-1 block">
-                      Prescription name
-                    </Label>
-                    <Input
-                      id="prescriptionName"
-                      placeholder="My glasses prescription"
-                      className="text-sm h-10"
-                    />
+                <div className="space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <Label htmlFor="prescriptionName" className="text-xs font-medium text-gray-700 mb-1 block">
+                        Prescription name
+                      </Label>
+                      <Input
+                        id="prescriptionName"
+                        placeholder="My glasses prescription"
+                        className="text-xs h-8"
+                        defaultValue={editingPrescriptionId ? savedPrescriptions.find(p => p.id === editingPrescriptionId)?.name || '' : ''}
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs font-medium text-gray-700 mb-1 block">
+                        Lens Type
+                      </Label>
+                      <select
+                        className="border rounded-md pl-2 pr-8 py-1 text-xs appearance-none bg-white h-8 w-full"
+                        id="powerType"
+                        defaultValue={editingPrescriptionId ? savedPrescriptions.find(p => p.id === editingPrescriptionId)?.powerType || 'SINGLE_VISION' : 'SINGLE_VISION'}
+                        style={{
+                          backgroundImage: "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e\")",
+                          backgroundPosition: "right 0.3rem center",
+                          backgroundRepeat: "no-repeat",
+                          backgroundSize: "1em 1em",
+                          paddingRight: "1.5rem"
+                        }}
+                      >
+                        <option value="SINGLE_VISION">Single Vision</option>
+                        <option value="PROGRESSIVE">Progressive</option>
+                        <option value="BIFOCAL">Bifocal</option>
+                      </select>
+                    </div>
                   </div>
-                  <div>
-                    <Label className="text-sm font-medium text-gray-700 mb-1 block">
-                      Lens Type
-                    </Label>
-                    <select
-                      className="border rounded-md pl-3 pr-10 py-2 text-sm appearance-none bg-white h-10"
-                      id="powerType"
-                      defaultValue="SINGLE_VISION"
-                      style={{
-                        backgroundImage: "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e\")",
-                        backgroundPosition: "right 0.5rem center",
-                        backgroundRepeat: "no-repeat",
-                        backgroundSize: "1.25em 1.25em",
-                        paddingRight: "2rem"
+                  <div className="flex gap-2">
+                    {editingPrescriptionId && (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={cancelEdit}
+                        className="h-8 px-3 text-xs flex-1"
+                      >
+                        Cancel
+                      </Button>
+                    )}
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => {
+                        const nameInput = document.getElementById('prescriptionName') as HTMLInputElement
+                        const powerTypeSelect = document.getElementById('powerType') as HTMLSelectElement
+                        if (nameInput.value.trim()) {
+                          if (editingPrescriptionId) {
+                            // Update existing prescription
+                            updatePrescription(editingPrescriptionId, nameInput.value.trim(), powerTypeSelect.value)
+                          } else {
+                            // Create new prescription
+                            const newPrescription = {
+                              id: Date.now().toString(),
+                              name: nameInput.value.trim(),
+                              powerType: powerTypeSelect.value,
+                              prescription: form.prescription!,
+                              savedDate: new Date().toISOString().split('T')[0]
+                            }
+                            const updatedPrescriptions = [...savedPrescriptions, newPrescription]
+                            console.log('💾 Saving new prescription:', newPrescription)
+                            console.log('📝 Updated prescriptions array:', updatedPrescriptions)
+                            setSavedPrescriptions(updatedPrescriptions)
+                            const userEmail = session?.user?.email
+                            if (userEmail) {
+                              const storageKey = `prescriptions_${userEmail}`
+                              const dataToSave = JSON.stringify(updatedPrescriptions)
+                              console.log('🔑 Storage key:', storageKey)
+                              console.log('💾 Data to save:', dataToSave)
+                              localStorage.setItem(storageKey, dataToSave)
+                              console.log('✅ Saved to localStorage')
+                              // Verify save
+                              const verification = localStorage.getItem(storageKey)
+                              console.log('🔍 Verification - retrieved:', verification)
+                            } else {
+                              console.log('❌ No user email for saving')
+                            }
+                            // Auto-select the newly saved prescription
+                            setSelectedPrescription(newPrescription)
+                            setShowPrescriptionForm(false)
+                          }
+                          nameInput.value = ''
+                        } else {
+                          alert('Please enter a prescription name')
+                        }
                       }}
+                      className="bg-black hover:bg-gray-800 text-white h-8 px-3 text-xs flex-1"
                     >
-                      <option value="SINGLE_VISION">Single Vision</option>
-                      <option value="PROGRESSIVE">Progressive</option>
-                      <option value="BIFOCAL">Bifocal</option>
-                    </select>
+                      {editingPrescriptionId ? 'Update' : 'Save'}
+                    </Button>
                   </div>
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={() => {
-                      const nameInput = document.getElementById('prescriptionName') as HTMLInputElement
-                      const powerTypeSelect = document.getElementById('powerType') as HTMLSelectElement
-                      if (nameInput.value.trim()) {
-                        savePrescription(nameInput.value.trim(), powerTypeSelect.value)
-                        nameInput.value = ''
-                        alert('Prescription saved!')
-                      } else {
-                        alert('Please enter a prescription name')
-                      }
-                    }}
-                    className="bg-black hover:bg-gray-800 text-white h-10 px-4"
-                  >
-                    Save
-                  </Button>
                 </div>
               </div>
             </div>
