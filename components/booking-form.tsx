@@ -963,7 +963,6 @@ export default function BookingForm() {
                           onClick={() => startEditPrescription(prescription)}
                           className="text-xs px-2 py-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                         >
-                          <Edit className="w-3 h-3 mr-1" />
                           Edit
                         </Button>
                         <Button
