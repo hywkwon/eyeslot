@@ -73,6 +73,7 @@ export async function POST(req: Request) {
           request_note,
           store_id,
           status: "BOOKED",
+          prescription: prescription || null,
         }),
       });
     } catch (err) {
@@ -170,6 +171,7 @@ export async function DELETE(req: Request) {
           request_note: booking.request_note,
           store_id: booking.store_id,
           status: "CANCELLED",
+          prescription: booking.prescription || null,
         }),
       });
     } catch (err) {
