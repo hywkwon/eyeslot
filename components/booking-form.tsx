@@ -1031,8 +1031,8 @@ export default function BookingForm() {
               </div>
 
               {/* Save Prescription */}
-              <div className="space-y-3 pt-3 border-t border-gray-200">
-                <div className="flex gap-3">
+              <div className="pt-3 border-t border-gray-200">
+                <div className="flex gap-2 items-end">
                   <div className="flex-1">
                     <Label htmlFor="prescriptionName" className="text-sm font-medium text-gray-700 mb-1 block">
                       Prescription name
@@ -1040,7 +1040,7 @@ export default function BookingForm() {
                     <Input
                       id="prescriptionName"
                       placeholder="My glasses prescription"
-                      className="text-sm"
+                      className="text-sm h-10"
                     />
                   </div>
                   <div>
@@ -1064,25 +1064,25 @@ export default function BookingForm() {
                       <option value="BIFOCAL">Bifocal</option>
                     </select>
                   </div>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => {
+                      const nameInput = document.getElementById('prescriptionName') as HTMLInputElement
+                      const powerTypeSelect = document.getElementById('powerType') as HTMLSelectElement
+                      if (nameInput.value.trim()) {
+                        savePrescription(nameInput.value.trim(), powerTypeSelect.value)
+                        nameInput.value = ''
+                        alert('Prescription saved!')
+                      } else {
+                        alert('Please enter a prescription name')
+                      }
+                    }}
+                    className="bg-black hover:bg-gray-800 text-white h-10 px-4"
+                  >
+                    Save
+                  </Button>
                 </div>
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={() => {
-                    const nameInput = document.getElementById('prescriptionName') as HTMLInputElement
-                    const powerTypeSelect = document.getElementById('powerType') as HTMLSelectElement
-                    if (nameInput.value.trim()) {
-                      savePrescription(nameInput.value.trim(), powerTypeSelect.value)
-                      nameInput.value = ''
-                      alert('Prescription saved!')
-                    } else {
-                      alert('Please enter a prescription name')
-                    }
-                  }}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  Save My Prescription
-                </Button>
               </div>
             </div>
           )}
