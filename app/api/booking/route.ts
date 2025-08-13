@@ -21,7 +21,7 @@ export async function OPTIONS() {
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const { user_name, email, phone, store_id, visit_date, visit_time, request_note } = body;
+  const { user_name, email, phone, store_id, visit_date, visit_time, request_note, prescription } = body;
 
   if (!user_name || !email || !phone || !store_id || !visit_date || !visit_time) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -37,7 +37,16 @@ export async function POST(req: Request) {
       Prefer: "return=representation",
     },
     body: JSON.stringify([
-      { user_name, email, phone, store_id, visit_date, visit_time, request_note },
+      {
+        user_name,
+        email,
+        phone,
+        store_id,
+        visit_date,
+        visit_time,
+        request_note,
+        ...(prescription && Object.keys(prescription).length > 0 && { prescription })
+      },
     ]),
   });
 

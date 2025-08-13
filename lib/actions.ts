@@ -1,5 +1,18 @@
 "use server"
 
+interface PrescriptionData {
+  rightEye: {
+    spherical: string
+    cylindrical: string
+    axis: string
+  }
+  leftEye: {
+    spherical: string
+    cylindrical: string
+    axis: string
+  }
+}
+
 interface BookingData {
   user_name: string
   email: string
@@ -8,6 +21,7 @@ interface BookingData {
   visit_date: string
   visit_time: string
   request_note: string
+  prescription?: PrescriptionData
 }
 
 interface BookingResponse {
@@ -53,10 +67,10 @@ export async function submitBooking(form: BookingData): Promise<BookingResponse>
       }
     }
 
-    console.log("=== SENDING REQUEST TO EXTERNAL API ===")
-    console.log("API URL: https://lens-api-liart.vercel.app/api/booking")
+    console.log("=== SENDING REQUEST TO LOCAL API ===")
+    console.log("API URL: /api/booking")
 
-    const res = await fetch("https://lens-api-liart.vercel.app/api/booking", {
+    const res = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3001'}/api/booking`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

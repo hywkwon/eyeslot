@@ -14,6 +14,27 @@ import { submitBooking } from "@/lib/actions"
 import { AuroraBackground } from "@/components/ui/aurora-background"
 import { motion } from "framer-motion"
 
+interface PrescriptionData {
+  rightEye: {
+    spherical: string
+    cylindrical: string
+    axis: string
+  }
+  leftEye: {
+    spherical: string
+    cylindrical: string
+    axis: string
+  }
+}
+
+interface SavedPrescription {
+  id: string
+  name: string
+  powerType: string
+  prescription: PrescriptionData
+  createdDate: string
+}
+
 interface FormData {
   user_name: string
   email: string
@@ -22,6 +43,7 @@ interface FormData {
   visit_date: string
   visit_time: string
   request_note: string
+  prescription?: PrescriptionData
 }
 
 interface FormErrors {
@@ -49,14 +71,23 @@ export default function BookingForm() {
     visit_date: "",
     visit_time: "",
     request_note: "",
+    prescription: {
+      rightEye: { spherical: "", cylindrical: "", axis: "" },
+      leftEye: { spherical: "", cylindrical: "", axis: "" }
+    }
   })
 
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState<FormErrors>({})
+  
+  // Prescription states
+  const [showPrescriptionForm, setShowPrescriptionForm] = useState(false)
+  const [savedPrescriptions, setSavedPrescriptions] = useState<SavedPrescription[]>([])
+  const [showSavedPrescriptions, setShowSavedPrescriptions] = useState(false)
 
-  // Auto-fill user data from session
+  // Auto-fill user data from session and load saved prescriptions
   useEffect(() => {
     if (session?.user) {
       setForm(prev => ({
@@ -64,8 +95,56 @@ export default function BookingForm() {
         email: session.user.email || "",
         user_name: session.user.name || "",
       }))
+      
+      // Load saved prescriptions from localStorage
+      loadSavedPrescriptions()
     }
   }, [session])
+
+  // Load saved prescriptions from localStorage
+  const loadSavedPrescriptions = () => {
+    try {
+      const saved = localStorage.getItem('savedPrescriptions')
+      if (saved) {
+        setSavedPrescriptions(JSON.parse(saved))
+      }
+    } catch (error) {
+      console.error('Failed to load saved prescriptions:', error)
+    }
+  }
+
+  // Save prescription to localStorage
+  const savePrescription = (name: string, powerType: string) => {
+    if (!form.prescription) return
+
+    const newPrescription: SavedPrescription = {
+      id: Date.now().toString(),
+      name,
+      powerType,
+      prescription: form.prescription,
+      createdDate: new Date().toISOString().split('T')[0]
+    }
+
+    const updatedPrescriptions = [...savedPrescriptions, newPrescription]
+    setSavedPrescriptions(updatedPrescriptions)
+    localStorage.setItem('savedPrescriptions', JSON.stringify(updatedPrescriptions))
+  }
+
+  // Load saved prescription
+  const loadPrescription = (prescription: SavedPrescription) => {
+    setForm(prev => ({
+      ...prev,
+      prescription: prescription.prescription
+    }))
+    setShowSavedPrescriptions(false)
+  }
+
+  // Delete saved prescription
+  const deletePrescription = (id: string) => {
+    const updatedPrescriptions = savedPrescriptions.filter(p => p.id !== id)
+    setSavedPrescriptions(updatedPrescriptions)
+    localStorage.setItem('savedPrescriptions', JSON.stringify(updatedPrescriptions))
+  }
 
   // Store map links configuration
   const storeMapLinks: Record<string, StoreMapLinks> = {
@@ -191,6 +270,20 @@ export default function BookingForm() {
     if (submitError) {
       setSubmitError("")
     }
+  }
+
+  // Handle prescription input changes
+  const handlePrescriptionChange = (eye: 'rightEye' | 'leftEye', field: 'spherical' | 'cylindrical' | 'axis', value: string) => {
+    setForm(prev => ({
+      ...prev,
+      prescription: {
+        ...prev.prescription!,
+        [eye]: {
+          ...prev.prescription![eye],
+          [field]: value
+        }
+      }
+    }))
   }
 
   const validateForm = (): boolean => {
@@ -500,9 +593,15 @@ export default function BookingForm() {
       visit_date: "",
       visit_time: "",
       request_note: "",
+      prescription: {
+        rightEye: { spherical: "", cylindrical: "", axis: "" },
+        leftEye: { spherical: "", cylindrical: "", axis: "" }
+      }
     })
     setErrors({})
     setSubmitError("")
+    setShowPrescriptionForm(false)
+    setShowSavedPrescriptions(false)
   }
 
   if (submitted) {
@@ -650,7 +749,14 @@ export default function BookingForm() {
             name="visit_time"
             value={form.visit_time}
             onChange={handleChange}
-            className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border rounded-md pl-3 pr-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
+            style={{
+              backgroundImage: "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e\")",
+              backgroundPosition: "right 0.5rem center",
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "1.25em 1.25em",
+              paddingRight: "2rem"
+            }}
           >
             <option value="">Select a time</option>
             {[...Array(10)].map((_, i) => {
@@ -672,7 +778,14 @@ export default function BookingForm() {
             name="store_id"
             value={form.store_id}
             onChange={handleChange}
-            className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border rounded-md pl-3 pr-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
+            style={{
+              backgroundImage: "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e\")",
+              backgroundPosition: "right 0.5rem center",
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "1.25em 1.25em",
+              paddingRight: "2rem"
+            }}
           >
             <option value="">Select a store</option>
             <option value="viewraum">viewraum (seoul)</option>
@@ -704,6 +817,209 @@ export default function BookingForm() {
                   Naver Maps
                   <ExternalLink className="h-3 w-3" />
                 </a>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Prescription Section */}
+        <div className="space-y-4 border-t pt-4">
+          <div className="flex items-center justify-between">
+            <Label className="text-base font-semibold">Lens Prescription (Optional)</Label>
+            <div className="flex gap-2">
+              {savedPrescriptions.length > 0 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowSavedPrescriptions(!showSavedPrescriptions)}
+                  className="text-xs"
+                >
+                  My Saved Prescriptions
+                </Button>
+              )}
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setShowPrescriptionForm(!showPrescriptionForm)}
+                className="text-xs"
+              >
+                {showPrescriptionForm ? 'Hide' : 'Add Prescription'}
+              </Button>
+            </div>
+          </div>
+
+          {/* Saved Prescriptions */}
+          {showSavedPrescriptions && (
+            <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+              <h4 className="font-medium text-sm">My Saved Prescriptions</h4>
+              {savedPrescriptions.length === 0 ? (
+                <p className="text-sm text-gray-500">No saved prescriptions yet</p>
+              ) : (
+                <div className="space-y-2">
+                  {savedPrescriptions.map((prescription) => (
+                    <div key={prescription.id} className="bg-white rounded-md p-3 border border-gray-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <div>
+                          <span className="font-medium text-sm">{prescription.name}</span>
+                          <span className="text-xs text-gray-500 ml-2">({prescription.powerType})</span>
+                        </div>
+                        <div className="flex gap-1">
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => loadPrescription(prescription)}
+                            className="text-xs px-2 py-1"
+                          >
+                            Use
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => deletePrescription(prescription.id)}
+                            className="text-xs px-2 py-1 text-red-600 hover:text-red-700"
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="text-xs text-gray-600">
+                        Created: {prescription.createdDate}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Prescription Form */}
+          {showPrescriptionForm && (
+            <div className="bg-gray-50 rounded-lg p-4 space-y-4">
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium text-sm">Enter Your Prescription</h4>
+              </div>
+              
+              {/* Prescription Table */}
+              <div className="bg-white rounded-md border border-gray-200 overflow-hidden">
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-600 text-white">
+                    <tr>
+                      <th className="py-3 px-4 text-left font-medium">EYE</th>
+                      <th className="py-3 px-4 text-center font-medium">RIGHT</th>
+                      <th className="py-3 px-4 text-center font-medium">LEFT</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-gray-200">
+                      <td className="py-3 px-4 bg-gray-600 text-white font-medium">Spherical</td>
+                      <td className="py-2 px-4">
+                        <Input
+                          type="text"
+                          placeholder="-2.50"
+                          value={form.prescription?.rightEye.spherical || ''}
+                          onChange={(e) => handlePrescriptionChange('rightEye', 'spherical', e.target.value)}
+                          className="text-center text-sm border-gray-300"
+                        />
+                      </td>
+                      <td className="py-2 px-4">
+                        <Input
+                          type="text"
+                          placeholder="-2.00"
+                          value={form.prescription?.leftEye.spherical || ''}
+                          onChange={(e) => handlePrescriptionChange('leftEye', 'spherical', e.target.value)}
+                          className="text-center text-sm border-gray-300"
+                        />
+                      </td>
+                    </tr>
+                    <tr className="border-b border-gray-200">
+                      <td className="py-3 px-4 bg-gray-600 text-white font-medium">Cylindrical</td>
+                      <td className="py-2 px-4">
+                        <Input
+                          type="text"
+                          placeholder="-2.00"
+                          value={form.prescription?.rightEye.cylindrical || ''}
+                          onChange={(e) => handlePrescriptionChange('rightEye', 'cylindrical', e.target.value)}
+                          className="text-center text-sm border-gray-300"
+                        />
+                      </td>
+                      <td className="py-2 px-4">
+                        <Input
+                          type="text"
+                          placeholder="-2.75"
+                          value={form.prescription?.leftEye.cylindrical || ''}
+                          onChange={(e) => handlePrescriptionChange('leftEye', 'cylindrical', e.target.value)}
+                          className="text-center text-sm border-gray-300"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 px-4 bg-gray-600 text-white font-medium">Axis</td>
+                      <td className="py-2 px-4">
+                        <Input
+                          type="text"
+                          placeholder="175"
+                          value={form.prescription?.rightEye.axis || ''}
+                          onChange={(e) => handlePrescriptionChange('rightEye', 'axis', e.target.value)}
+                          className="text-center text-sm border-gray-300"
+                        />
+                      </td>
+                      <td className="py-2 px-4">
+                        <Input
+                          type="text"
+                          placeholder="10"
+                          value={form.prescription?.leftEye.axis || ''}
+                          onChange={(e) => handlePrescriptionChange('leftEye', 'axis', e.target.value)}
+                          className="text-center text-sm border-gray-300"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Save Prescription */}
+              <div className="flex gap-2 pt-2">
+                <Input
+                  placeholder="Prescription name"
+                  className="flex-1 text-sm"
+                  id="prescriptionName"
+                />
+                <select
+                  className="border rounded-md pl-3 pr-10 py-2 text-sm appearance-none bg-white"
+                  id="powerType"
+                  defaultValue="SINGLE_VISION"
+                  style={{
+                    backgroundImage: "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e\")",
+                    backgroundPosition: "right 0.5rem center",
+                    backgroundRepeat: "no-repeat",
+                    backgroundSize: "1.25em 1.25em",
+                    paddingRight: "2rem"
+                  }}
+                >
+                  <option value="SINGLE_VISION">Single Vision</option>
+                  <option value="PROGRESSIVE">Progressive</option>
+                  <option value="BIFOCAL">Bifocal</option>
+                </select>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => {
+                    const nameInput = document.getElementById('prescriptionName') as HTMLInputElement
+                    const powerTypeSelect = document.getElementById('powerType') as HTMLSelectElement
+                    if (nameInput.value.trim()) {
+                      savePrescription(nameInput.value.trim(), powerTypeSelect.value)
+                      nameInput.value = ''
+                      alert('Prescription saved!')
+                    }
+                  }}
+                  className="text-xs px-3"
+                >
+                  Save
+                </Button>
               </div>
             </div>
           )}
