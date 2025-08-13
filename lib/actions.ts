@@ -13,6 +13,14 @@ interface PrescriptionData {
   }
 }
 
+interface SavedPrescription {
+  id: string
+  name: string
+  powerType: string
+  prescription: PrescriptionData
+  savedDate: string
+}
+
 interface BookingData {
   user_name: string
   email: string
@@ -22,6 +30,7 @@ interface BookingData {
   visit_time: string
   request_note: string
   prescription?: PrescriptionData
+  selectedPrescription?: SavedPrescription
 }
 
 interface BookingResponse {

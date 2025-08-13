@@ -21,7 +21,7 @@ export async function OPTIONS() {
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const { user_name, email, phone, store_id, visit_date, visit_time, request_note, prescription } = body;
+  const { user_name, email, phone, store_id, visit_date, visit_time, request_note, prescription, selectedPrescription } = body;
 
   if (!user_name || !email || !phone || !store_id || !visit_date || !visit_time) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -73,7 +73,7 @@ export async function POST(req: Request) {
           request_note,
           store_id,
           status: "BOOKED",
-          lens_type: prescription ? (prescription.powerType || '') : '',
+          lens_type: selectedPrescription ? selectedPrescription.powerType || '' : '',
           right_eye: prescription ? `${prescription.rightEye.spherical || ''},${prescription.rightEye.cylindrical || ''},${prescription.rightEye.axis || ''}` : '',
           left_eye: prescription ? `${prescription.leftEye.spherical || ''},${prescription.leftEye.cylindrical || ''},${prescription.leftEye.axis || ''}` : '',
         }),
@@ -173,7 +173,7 @@ export async function DELETE(req: Request) {
           request_note: booking.request_note,
           store_id: booking.store_id,
           status: "CANCELLED",
-          lens_type: booking.prescription ? (booking.prescription.powerType || '') : '',
+          lens_type: booking.selectedPrescription ? booking.selectedPrescription.powerType || '' : '',
           right_eye: booking.prescription ? `${booking.prescription.rightEye.spherical || ''},${booking.prescription.rightEye.cylindrical || ''},${booking.prescription.rightEye.axis || ''}` : '',
           left_eye: booking.prescription ? `${booking.prescription.leftEye.spherical || ''},${booking.prescription.leftEye.cylindrical || ''},${booking.prescription.leftEye.axis || ''}` : '',
         }),
