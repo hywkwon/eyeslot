@@ -634,10 +634,13 @@ export default function BookingForm() {
     setSubmitError("")
 
     try {
-      const result = await submitBooking({
+      const bookingData = {
         ...form,
         selectedPrescription
-      })
+      };
+      console.log("🚀 Submitting booking data:", bookingData);
+      
+      const result = await submitBooking(bookingData)
 
       if (result.success) {
         setSubmitted(true)
