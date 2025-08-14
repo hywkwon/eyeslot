@@ -5,7 +5,7 @@ const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 // 업체별 Webhook 연결 (지금은 viewraum만)
 const storeWebhookMap: Record<string, string> = {
-  viewraum: "https://script.google.com/macros/s/AKfycbzLSe51VnUPjWXbBtWIlL-J-BZHOXd6wokL0j5XBvwy_I2GPW3M1G7V8zxtvnBUPvAt_Q/exec",
+  viewraum: "https://script.google.com/macros/s/AKfycbxVda1sTk0yJVlpaZNoMCCUS49GwST_Nfif24j5UL_2mlwgwdVO-FmXBTEdK0UDND01GA/exec",
 };
 
 export async function OPTIONS() {
