@@ -81,6 +81,62 @@ export async function POST(request: NextRequest) {
   }
 }
 
+export async function PUT(request: NextRequest) {
+  try {
+    console.log('Review API: Starting PUT request')
+    const requestData = await request.json()
+    console.log('Review API: Request data:', requestData)
+    
+    const { booking_id, rating, review_text, store_id } = requestData
+
+    // Validation
+    if (!booking_id || !rating || rating < 1 || rating > 5) {
+      console.log('Review API: Validation failed', { booking_id, rating, review_text })
+      return NextResponse.json(
+        { message: 'Missing required fields or invalid rating' },
+        { status: 400 }
+      )
+    }
+
+    console.log('Review API: Updating existing review')
+    // Update existing review
+    const { data, error } = await supabase
+      .from('reviews')
+      .update({
+        rating,
+        review_text: review_text || '',
+        store_id: store_id || null,
+        updated_at: new Date().toISOString()
+      })
+      .eq('booking_id', booking_id)
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Review API: Error updating review:', error)
+      return NextResponse.json(
+        { message: 'Failed to update review', error: error.message },
+        { status: 500 }
+      )
+    }
+
+    console.log('Review API: Review updated successfully:', data)
+    return NextResponse.json(
+      { 
+        message: 'Review updated successfully', 
+        data: data 
+      },
+      { status: 200 }
+    )
+  } catch (error) {
+    console.error('Review API error:', error)
+    return NextResponse.json(
+      { message: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)

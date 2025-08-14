@@ -208,6 +208,15 @@ export default function BookingLookup() {
     const confirmed = window.confirm("Are you sure you want to cancel this reservation?")
     if (!confirmed) return
 
+    // 옵티미스틱 UI: 백업을 위해 현재 booking 저장
+    const bookingToCancel = bookings.find(b => b.id === bookingId)
+    
+    // 즉시 카드 삭제 (옵티미스틱 UI)
+    setBookings((prev) => prev.filter((b) => b.id !== bookingId))
+    
+    // 즉시 성공 메시지 표시
+    alert("Reservation cancelled successfully.")
+
     try {
       // Use the local API route which proxies to the external API
       const res = await fetch("/api/booking", {
@@ -221,10 +230,25 @@ export default function BookingLookup() {
         throw new Error(result.message || "Failed to cancel reservation.")
       }
 
-      setBookings((prev) => prev.filter((b) => b.id !== bookingId))
-      alert("Reservation cancelled successfully.")
+      // API 성공 시에는 이미 옵티미스틱 업데이트가 적용되었으므로 추가 작업 없음
+      console.log("Reservation cancelled successfully via API")
     } catch (err: any) {
-      alert(err.message || "Cancellation failed. Please try again.")
+      console.error("Cancellation API failed:", err)
+      
+      // 실패 시 옵티미스틱 상태 롤백: 삭제된 booking을 다시 원래 위치에 복원
+      if (bookingToCancel) {
+        setBookings(prev => {
+          // 원래 순서대로 다시 정렬하여 복원
+          const restored = [...prev, bookingToCancel].sort((a, b) => {
+            const dateA = new Date(`${a.visit_date} ${a.visit_time}`)
+            const dateB = new Date(`${b.visit_date} ${b.visit_time}`)
+            return dateA.getTime() - dateB.getTime()
+          })
+          return restored
+        })
+      }
+      
+      alert("A temporary error occurred. Cancellation failed. Please try again.")
     }
   }
 
@@ -270,6 +294,17 @@ export default function BookingLookup() {
     }))
   }
 
+  const handleEditReview = (bookingId: string, currentRating: number, currentReviewText: string) => {
+    setReviewStates(prev => ({
+      ...prev,
+      [bookingId]: {
+        rating: currentRating,
+        reviewText: currentReviewText,
+        isReviewing: true
+      }
+    }))
+  }
+
   const handleCancelReview = (bookingId: string) => {
     setReviewStates(prev => {
       const newState = { ...prev }
@@ -307,6 +342,10 @@ export default function BookingLookup() {
 
     console.log('Submitting review for booking:', bookingId, reviewState)
 
+    // 기존 리뷰가 있는지 확인 (편집 모드인지)
+    const booking = bookings.find(b => b.id === bookingId)
+    const isEditing = booking?.reviewed
+
     // 옵티미스틱 UI: 즉시 리뷰가 성공적으로 제출된 것처럼 UI 업데이트
     setBookings(prev => prev.map(booking => 
       booking.id === bookingId 
@@ -318,9 +357,6 @@ export default function BookingLookup() {
     handleCancelReview(bookingId)
 
     try {
-      // Find the booking to get the store_id
-      const booking = bookings.find(b => b.id === bookingId)
-      
       const requestBody = {
         booking_id: bookingId,
         rating: reviewState.rating,
@@ -329,9 +365,10 @@ export default function BookingLookup() {
       }
       
       console.log('Review request body:', requestBody)
+      console.log('Is editing existing review:', isEditing)
 
       const res = await fetch('/api/review', {
-        method: 'POST',
+        method: isEditing ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestBody)
       })
@@ -523,9 +560,9 @@ export default function BookingLookup() {
                   {/* Cancellation Status */}
                   <div className="mt-3 p-2 bg-gray-50 rounded-md">
                     {canCancel ? (
-                      <p className="text-xs text-green-600">✓ Can be cancelled ({daysUntil} days remaining)</p>
+                      <p className="text-xs text-green-600">Can be cancelled ({daysUntil} days remaining)</p>
                     ) : (
-                      <p className="text-xs text-red-600">✗ Cannot be cancelled (less than 2 days remaining)</p>
+                      <p className="text-xs text-red-600">Cannot be cancelled (less than 2 days remaining)</p>
                     )}
                   </div>
 
@@ -608,23 +645,33 @@ export default function BookingLookup() {
                   )}
 
                   {/* Display Existing Review */}
-                  {booking.reviewed && booking.rating && (
+                  {booking.reviewed && booking.rating && !reviewStates[booking.id]?.isReviewing && (
                     <div className="mt-3 p-3 bg-green-50 rounded-md border border-green-200">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-sm font-medium text-green-800">Your Review:</span>
-                        <div className="flex items-center gap-1">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star 
-                              key={star}
-                              className={`h-4 w-4 ${
-                                star <= booking.rating!
-                                  ? 'fill-yellow-400 text-yellow-400' 
-                                  : 'text-gray-300'
-                              }`}
-                            />
-                          ))}
-                          <span className="text-sm text-green-700 ml-1">{booking.rating}/5</span>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-green-800">Your Review:</span>
+                          <div className="flex items-center gap-1">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <Star 
+                                key={star}
+                                className={`h-4 w-4 ${
+                                  star <= booking.rating!
+                                    ? 'fill-yellow-400 text-yellow-400' 
+                                    : 'text-gray-300'
+                                }`}
+                              />
+                            ))}
+                            <span className="text-sm text-green-700 ml-1">{booking.rating}/5</span>
+                          </div>
                         </div>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleEditReview(booking.id, booking.rating!, booking.review_text || '')}
+                          className="text-green-600 border-green-300 hover:bg-green-100"
+                        >
+                          Edit Review
+                        </Button>
                       </div>
                       {booking.review_text && (
                         <p className="text-sm text-green-700 italic">"{booking.review_text}"</p>
