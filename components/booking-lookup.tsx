@@ -668,7 +668,7 @@ export default function BookingLookup() {
                           size="sm" 
                           variant="outline"
                           onClick={() => handleEditReview(booking.id, booking.rating!, booking.review_text || '')}
-                          className="text-green-600 border-green-300 hover:bg-green-100"
+                          className="text-green-600 border-green-300 hover:bg-green-100 h-7"
                         >
                           Edit
                         </Button>
