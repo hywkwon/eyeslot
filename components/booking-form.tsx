@@ -628,8 +628,16 @@ export default function BookingForm() {
   }
 
   const handleSubmit = async () => {
-    if (!validateForm()) return
+    console.log("🎯 Submit button clicked!")
+    console.log("📋 Current form data:", form)
+    console.log("👤 Selected prescription:", selectedPrescription)
+    
+    if (!validateForm()) {
+      console.log("❌ Form validation failed")
+      return
+    }
 
+    console.log("✅ Form validation passed - proceeding with submission")
     setIsLoading(true)
     setSubmitError("")
 
