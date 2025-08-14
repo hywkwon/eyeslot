@@ -25,9 +25,9 @@ export default function ConfirmationPage() {
           <>
             {/* Background Globe Animation */}
             <motion.div
-              className="fixed inset-0 z-10 flex items-end justify-center pb-20"
+              className="fixed inset-0 z-30 flex items-end justify-center pb-20 pointer-events-none"
               initial={{ opacity: 0, scale: 0.6 }}
-              animate={{ opacity: 0.4, scale: 1 }}
+              animate={{ opacity: 0.8, scale: 1 }}
               exit={{ opacity: 0, scale: 0.6 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
@@ -36,7 +36,7 @@ export default function ConfirmationPage() {
 
             {/* Glow Effects */}
             <motion.div
-              className="fixed inset-0 z-5"
+              className="fixed inset-0 z-20 pointer-events-none"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -53,7 +53,7 @@ export default function ConfirmationPage() {
             </motion.div>
 
             {/* Main Content */}
-            <div className="min-h-screen flex items-center justify-center p-4 relative z-20">
+            <div className="min-h-screen flex items-center justify-center p-4 relative z-40">
               <motion.div
                 initial={{ 
                   opacity: 0, 
