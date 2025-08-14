@@ -648,7 +648,12 @@ export default function BookingForm() {
       };
       console.log("🚀 Submitting booking data:", bookingData);
       
-      const result = await submitBooking(bookingData)
+      console.log("📞 Calling submitBooking function...");
+      console.log("🔍 submitBooking type:", typeof submitBooking);
+      console.log("🔍 submitBooking function:", submitBooking);
+      
+      const result = await submitBooking(bookingData);
+      console.log("📦 submitBooking result:", result);
 
       if (result.success) {
         setSubmitted(true)
