@@ -670,7 +670,7 @@ export default function BookingLookup() {
                           onClick={() => handleEditReview(booking.id, booking.rating!, booking.review_text || '')}
                           className="text-green-600 border-green-300 hover:bg-green-100"
                         >
-                          Edit Review
+                          Edit
                         </Button>
                       </div>
                       {booking.review_text && (
