@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, CheckCircle, ExternalLink, X, Edit } from "lucide-react"
+import { Loader2, CheckCircle, ExternalLink, X, Edit, Check } from "lucide-react"
 import { submitBooking } from "@/lib/actions"
 import { AuroraBackground } from "@/components/ui/aurora-background"
 import { motion } from "framer-motion"
@@ -925,20 +925,26 @@ export default function BookingForm() {
                 {savedPrescriptions.map((prescription) => (
                   <div 
                     key={prescription.id} 
-                    className={`bg-white rounded-md p-2 md:p-3 border transition-all ${
+                    className={`bg-white rounded-md p-2 md:p-3 border-2 transition-all ${
                       selectedPrescription?.id === prescription.id 
-                        ? 'border-green-300 bg-green-50' 
+                        ? 'border-green-500 bg-green-100 shadow-sm' 
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
                     <div className="flex items-start justify-between mb-1 md:mb-2 gap-2">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1 flex-wrap">
-                          <span className="font-medium text-sm truncate">{prescription.name}</span>
-                          <span className="text-xs text-gray-500 shrink-0">({prescription.powerType})</span>
                           {selectedPrescription?.id === prescription.id && (
-                            <span className="text-xs text-green-600 font-medium hidden md:inline shrink-0">✓ Selected</span>
+                            <div className="flex items-center justify-center w-4 h-4 bg-green-600 rounded-full shrink-0">
+                              <Check className="w-2.5 h-2.5 text-white" />
+                            </div>
                           )}
+                          <span className={`font-medium text-sm truncate ${
+                            selectedPrescription?.id === prescription.id ? 'text-green-800' : ''
+                          }`}>
+                            {prescription.name}
+                          </span>
+                          <span className="text-xs text-gray-500 shrink-0">({prescription.powerType})</span>
                         </div>
                         <div className="text-xs text-gray-600 mt-1 md:mt-0 md:hidden">
                           {prescription.savedDate}
@@ -956,10 +962,10 @@ export default function BookingForm() {
                               usePrescription(prescription)
                             }
                           }}
-                          className={`text-xs px-1.5 py-1 md:px-2 h-7 ${
+                          className={`text-xs px-1.5 py-1 md:px-2 h-7 font-medium ${
                             selectedPrescription?.id === prescription.id
-                              ? 'bg-green-100 border-green-300 text-green-700'
-                              : 'hover:bg-blue-50'
+                              ? 'bg-green-600 border-green-600 text-white hover:bg-green-700'
+                              : 'hover:bg-blue-50 border-blue-200 text-blue-600'
                           }`}
                         >
                           {selectedPrescription?.id === prescription.id ? 'Clear' : 'Use'}
