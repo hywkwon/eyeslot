@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import { CheckCircle, Calendar, ArrowLeft } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useState, useEffect } from "react"
-import { Globe } from "@/components/ui/globe"
 import { Glow } from "@/components/ui/glow"
 
 export default function ConfirmationPage() {
@@ -23,16 +22,6 @@ export default function ConfirmationPage() {
       <AnimatePresence>
         {showDialog && (
           <>
-            {/* Background Globe Animation */}
-            <motion.div
-              className="fixed inset-0 z-30 flex items-end justify-center pb-20 pointer-events-none"
-              initial={{ opacity: 0, scale: 0.6 }}
-              animate={{ opacity: 0.8, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.6 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-            >
-              <Globe className="w-[700px] h-[700px]" />
-            </motion.div>
 
             {/* Glow Effects */}
             <motion.div
