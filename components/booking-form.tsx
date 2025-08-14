@@ -102,27 +102,78 @@ export default function BookingForm() {
     }
   }, [session])
 
-  // Load saved prescriptions from localStorage (multiple per user)
-  const loadSavedPrescriptions = () => {
+  // Load saved prescriptions from database
+  const loadSavedPrescriptions = async () => {
     try {
       const userEmail = session?.user?.email
       console.log('🔍 Loading prescriptions for email:', userEmail)
+      
       if (userEmail) {
-        const storageKey = `prescriptions_${userEmail}`
-        const saved = localStorage.getItem(storageKey)
-        console.log('📦 Retrieved from localStorage:', saved)
-        if (saved) {
-          const parsedPrescriptions = JSON.parse(saved)
-          console.log('✅ Parsed prescriptions:', parsedPrescriptions)
-          setSavedPrescriptions(parsedPrescriptions)
+        // Try to load from database first
+        const response = await fetch(`/api/prescriptions?user_email=${encodeURIComponent(userEmail)}`)
+        
+        if (response.ok) {
+          const result = await response.json()
+          console.log('✅ Loaded prescriptions from database:', result.data)
+          setSavedPrescriptions(result.data || [])
         } else {
-          console.log('❌ No saved prescriptions found')
+          console.log('❌ Failed to load from database, checking localStorage')
+          // Fallback to localStorage for migration
+          await migrateLocalStorageToDatabase(userEmail)
         }
       } else {
         console.log('❌ No user email found')
       }
     } catch (error) {
       console.error('Failed to load saved prescriptions:', error)
+      // Fallback to localStorage if database fails
+      const userEmail = session?.user?.email
+      if (userEmail) {
+        await migrateLocalStorageToDatabase(userEmail)
+      }
+    }
+  }
+
+  // Migration function to move localStorage data to database
+  const migrateLocalStorageToDatabase = async (userEmail: string) => {
+    try {
+      const storageKey = `prescriptions_${userEmail}`
+      const saved = localStorage.getItem(storageKey)
+      
+      if (saved) {
+        const localPrescriptions = JSON.parse(saved)
+        console.log('🔄 Migrating localStorage prescriptions to database:', localPrescriptions)
+        
+        // Upload each prescription to database
+        for (const prescription of localPrescriptions) {
+          const response = await fetch('/api/prescriptions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              user_email: userEmail,
+              name: prescription.name,
+              power_type: prescription.powerType,
+              prescription_data: prescription.prescription
+            })
+          })
+          
+          if (!response.ok) {
+            console.error('❌ Failed to migrate prescription:', prescription.name)
+          }
+        }
+        
+        // After successful migration, reload from database
+        await loadSavedPrescriptions()
+        
+        // Clear localStorage after successful migration
+        localStorage.removeItem(storageKey)
+        console.log('✅ Migration completed and localStorage cleared')
+      } else {
+        setSavedPrescriptions([])
+      }
+    } catch (error) {
+      console.error('❌ Migration failed:', error)
+      setSavedPrescriptions([])
     }
   }
 
@@ -149,17 +200,29 @@ export default function BookingForm() {
   }
 
   // Delete saved prescription
-  const deletePrescription = (id: string) => {
-    const userEmail = session?.user?.email
-    if (!userEmail) return
+  const deletePrescription = async (id: string) => {
+    try {
+      const response = await fetch('/api/prescriptions', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      })
 
-    const updatedPrescriptions = savedPrescriptions.filter(p => p.id !== id)
-    setSavedPrescriptions(updatedPrescriptions)
-    localStorage.setItem(`prescriptions_${userEmail}`, JSON.stringify(updatedPrescriptions))
-
-    // If deleted prescription was selected, clear selection
-    if (selectedPrescription && selectedPrescription.id === id) {
-      clearSelectedPrescription()
+      if (response.ok) {
+        const updatedPrescriptions = savedPrescriptions.filter(p => p.id !== id)
+        setSavedPrescriptions(updatedPrescriptions)
+        
+        // If deleted prescription was selected, clear selection
+        if (selectedPrescription && selectedPrescription.id === id) {
+          clearSelectedPrescription()
+        }
+        
+        console.log('✅ Prescription deleted successfully')
+      } else {
+        console.error('❌ Failed to delete prescription')
+      }
+    } catch (error) {
+      console.error('❌ Error deleting prescription:', error)
     }
   }
 
@@ -174,37 +237,45 @@ export default function BookingForm() {
     setShowPrescriptionForm(true)
   }
 
-  const updatePrescription = (id: string, name: string, powerType: string) => {
+  const updatePrescription = async (id: string, name: string, powerType: string) => {
     if (!form.prescription) return
 
-    const userEmail = session?.user?.email
-    if (!userEmail) return
+    try {
+      const response = await fetch('/api/prescriptions', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id,
+          name,
+          power_type: powerType,
+          prescription_data: form.prescription
+        })
+      })
 
-    const updatedPrescriptions = savedPrescriptions.map(p => 
-      p.id === id 
-        ? {
-            ...p,
-            name,
-            powerType,
-            prescription: form.prescription,
-            savedDate: new Date().toISOString().split('T')[0]
-          }
-        : p
-    )
-    
-    setSavedPrescriptions(updatedPrescriptions)
-    localStorage.setItem(`prescriptions_${userEmail}`, JSON.stringify(updatedPrescriptions))
-    
-    // Update selected prescription if it's the one being edited
-    if (selectedPrescription && selectedPrescription.id === id) {
-      const updatedSelected = updatedPrescriptions.find(p => p.id === id)
-      if (updatedSelected) {
-        setSelectedPrescription(updatedSelected)
+      if (response.ok) {
+        const result = await response.json()
+        const updatedPrescription = result.data
+        
+        const updatedPrescriptions = savedPrescriptions.map(p => 
+          p.id === id ? updatedPrescription : p
+        )
+        
+        setSavedPrescriptions(updatedPrescriptions)
+        
+        // Update selected prescription if it's the one being edited
+        if (selectedPrescription && selectedPrescription.id === id) {
+          setSelectedPrescription(updatedPrescription)
+        }
+        
+        setEditingPrescriptionId(null)
+        setShowPrescriptionForm(false)
+        console.log('✅ Prescription updated successfully')
+      } else {
+        console.error('❌ Failed to update prescription')
       }
+    } catch (error) {
+      console.error('❌ Error updating prescription:', error)
     }
-    
-    setEditingPrescriptionId(null)
-    setShowPrescriptionForm(false)
   }
 
   const cancelEdit = () => {
@@ -732,27 +803,27 @@ export default function BookingForm() {
                   <h4 className="font-bold text-gray-900 mb-4 text-center text-lg">What's Next?</h4>
                   <div className="space-y-3 text-sm text-gray-700">
                     <div className="flex items-start gap-3">
-                      <span className="text-blue-500 font-bold text-lg">•</span>
-                      <span><strong>Head to the store</strong> at your reserved time</span>
+                      <span className="text-blue-500 font-bold text-lg leading-none">•</span>
+                      <span className="flex-1"><strong>Head to the store</strong> at your reserved time</span>
                     </div>
                     <div className="flex items-start gap-3">
-                      <span className="text-blue-500 font-bold text-lg">•</span>
-                      <span><strong>Show your reservation details</strong> when you arrive</span>
+                      <span className="text-blue-500 font-bold text-lg leading-none">•</span>
+                      <span className="flex-1"><strong>Show your reservation details</strong> when you arrive</span>
                     </div>
                     <div className="flex items-start gap-3">
-                      <span className="text-blue-500 font-bold text-lg">•</span>
-                      <span><strong>Get your free eye exam</strong> and prescription check</span>
+                      <span className="text-blue-500 font-bold text-lg leading-none">•</span>
+                      <span className="flex-1"><strong>Get your free eye exam</strong> and prescription check</span>
                     </div>
                     <div className="flex items-start gap-3">
-                      <span className="text-blue-500 font-bold text-lg">•</span>
-                      <span><strong>Need frames?</strong> Our team will help you find the perfect pair</span>
+                      <span className="text-blue-500 font-bold text-lg leading-none">•</span>
+                      <span className="flex-1"><strong>Need frames?</strong> Our team will help you find the perfect pair</span>
                     </div>
                     <div className="flex items-start gap-3">
-                      <span className="text-blue-500 font-bold text-lg">•</span>
-                      <span><strong>Share your experience</strong> with a review after your visit</span>
+                      <span className="text-blue-500 font-bold text-lg leading-none">•</span>
+                      <span className="flex-1"><strong>Share your experience</strong> with a review after your visit</span>
                     </div>
                   </div>
-                  <p className="text-center text-gray-600 text-base mt-6 font-medium">See you soon!</p>
+                  <p className="text-center text-gray-600 text-base mt-6 font-medium">Welcome to Korea, See you soon.</p>
                 </div>
               </CardContent>
               <CardFooter className="justify-center pb-8">
@@ -1160,34 +1231,43 @@ export default function BookingForm() {
                             updatePrescription(editingPrescriptionId, nameInput.value.trim(), powerTypeSelect.value)
                           } else {
                             // Create new prescription
-                            const newPrescription = {
-                              id: Date.now().toString(),
-                              name: nameInput.value.trim(),
-                              powerType: powerTypeSelect.value,
-                              prescription: form.prescription!,
-                              savedDate: new Date().toISOString().split('T')[0]
-                            }
-                            const updatedPrescriptions = [...savedPrescriptions, newPrescription]
-                            console.log('💾 Saving new prescription:', newPrescription)
-                            console.log('📝 Updated prescriptions array:', updatedPrescriptions)
-                            setSavedPrescriptions(updatedPrescriptions)
                             const userEmail = session?.user?.email
-                            if (userEmail) {
-                              const storageKey = `prescriptions_${userEmail}`
-                              const dataToSave = JSON.stringify(updatedPrescriptions)
-                              console.log('🔑 Storage key:', storageKey)
-                              console.log('💾 Data to save:', dataToSave)
-                              localStorage.setItem(storageKey, dataToSave)
-                              console.log('✅ Saved to localStorage')
-                              // Verify save
-                              const verification = localStorage.getItem(storageKey)
-                              console.log('🔍 Verification - retrieved:', verification)
+                            if (userEmail && form.prescription) {
+                              const createPrescription = async () => {
+                                try {
+                                  const response = await fetch('/api/prescriptions', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                      user_email: userEmail,
+                                      name: nameInput.value.trim(),
+                                      power_type: powerTypeSelect.value,
+                                      prescription_data: form.prescription
+                                    })
+                                  })
+
+                                  if (response.ok) {
+                                    const result = await response.json()
+                                    const newPrescription = result.data
+                                    
+                                    const updatedPrescriptions = [...savedPrescriptions, newPrescription]
+                                    setSavedPrescriptions(updatedPrescriptions)
+                                    
+                                    // Auto-select the newly saved prescription
+                                    setSelectedPrescription(newPrescription)
+                                    setShowPrescriptionForm(false)
+                                    console.log('✅ Prescription saved to database successfully')
+                                  } else {
+                                    console.error('❌ Failed to save prescription to database')
+                                  }
+                                } catch (error) {
+                                  console.error('❌ Error saving prescription:', error)
+                                }
+                              }
+                              createPrescription()
                             } else {
-                              console.log('❌ No user email for saving')
+                              console.log('❌ No user email or prescription data for saving')
                             }
-                            // Auto-select the newly saved prescription
-                            setSelectedPrescription(newPrescription)
-                            setShowPrescriptionForm(false)
                           }
                           nameInput.value = ''
                         } else {
