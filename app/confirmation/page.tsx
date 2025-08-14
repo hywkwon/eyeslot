@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { CheckCircle, Calendar, ArrowLeft } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useState, useEffect } from "react"
+import { Globe } from "@/components/ui/globe"
 
 export default function ConfirmationPage() {
   const router = useRouter()
@@ -21,79 +22,15 @@ export default function ConfirmationPage() {
       <AnimatePresence>
         {showDialog && (
           <>
-            {/* Background Effects */}
+            {/* Background Globe Animation */}
             <motion.div
-              className="fixed inset-0 z-10"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
+              className="fixed inset-0 z-10 flex items-center justify-center"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 0.3, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              {/* Purple blur circle */}
-              <motion.div
-                className="absolute rounded-full blur-[100px] bg-purple-500/30 h-96 w-96 top-[-25%] left-[-50%]"
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ 
-                  scale: [1, 0.7, 1], 
-                  opacity: 0.6,
-                  transition: {
-                    scale: {
-                      duration: 15,
-                      repeat: Infinity,
-                      repeatType: "loop",
-                      ease: "easeInOut",
-                    },
-                    opacity: { duration: 0.5 }
-                  }
-                }}
-                exit={{ scale: 0, opacity: 0 }}
-              />
-              
-              {/* Pink blur circle */}
-              <motion.div
-                className="absolute rounded-full blur-[100px] bg-pink-400/25 h-96 w-96 top-[25%] right-[-50%]"
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ 
-                  scale: [1, 0.8, 1], 
-                  opacity: 0.5,
-                  transition: {
-                    scale: {
-                      duration: 20,
-                      repeat: Infinity,
-                      repeatType: "loop",
-                      ease: "easeInOut",
-                      delay: 0.5
-                    },
-                    opacity: { duration: 0.8, delay: 0.2 }
-                  }
-                }}
-                exit={{ scale: 0, opacity: 0 }}
-              />
-
-              {/* Central expanding circle */}
-              <motion.div
-                className="absolute rounded-full h-32 w-32 blur-lg origin-center will-change-transform left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-                initial={{
-                  scale: 0,
-                  opacity: 1,
-                  backgroundColor: "#FE8BBB",
-                }}
-                animate={{
-                  scale: 8,
-                  opacity: 0.1,
-                  backgroundColor: "#9E7AFF",
-                  transition: {
-                    duration: 1,
-                    opacity: { duration: 1, ease: "easeInOut" },
-                  },
-                }}
-                exit={{
-                  scale: 0,
-                  opacity: 1,
-                  backgroundColor: "#FE8BBB",
-                  transition: { duration: 0.5 },
-                }}
-              />
+              <Globe className="w-[500px] h-[500px]" />
             </motion.div>
 
             {/* Main Content */}

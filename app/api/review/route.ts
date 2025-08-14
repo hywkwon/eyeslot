@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     const requestData = await request.json()
     console.log('Review API: Request data:', requestData)
     
-    const { booking_id, rating, review_text } = requestData
+    const { booking_id, rating, review_text, store_id } = requestData
 
     // Validation
     if (!booking_id || !rating || rating < 1 || rating > 5) {
@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
         booking_id,
         rating,
         review_text: review_text || null,
+        store_id: store_id || null,
         created_at: new Date().toISOString()
       })
       .select()
@@ -84,19 +85,24 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const bookingId = searchParams.get('booking_id')
+    const storeId = searchParams.get('store_id')
 
-    if (!bookingId) {
+    if (!bookingId && !storeId) {
       return NextResponse.json(
-        { message: 'Booking ID is required' },
+        { message: 'Either booking_id or store_id is required' },
         { status: 400 }
       )
     }
 
-    const { data, error } = await supabase
-      .from('reviews')
-      .select('*')
-      .eq('booking_id', bookingId)
-      .single()
+    let query = supabase.from('reviews').select('*')
+    
+    if (bookingId) {
+      query = query.eq('booking_id', bookingId).single()
+    } else if (storeId) {
+      query = query.eq('store_id', storeId).order('created_at', { ascending: false })
+    }
+
+    const { data, error } = await query
 
     if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
       console.error('Supabase error:', error)

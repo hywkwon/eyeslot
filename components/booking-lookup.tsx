@@ -266,10 +266,14 @@ export default function BookingLookup() {
     console.log('Submitting review for booking:', bookingId, reviewState)
 
     try {
+      // Find the booking to get the store_id
+      const booking = bookings.find(b => b.id === bookingId)
+      
       const requestBody = {
         booking_id: bookingId,
         rating: reviewState.rating,
-        review_text: reviewState.reviewText
+        review_text: reviewState.reviewText,
+        store_id: booking?.store_id
       }
       
       console.log('Review request body:', requestBody)
