@@ -674,7 +674,7 @@ export default function BookingLookup() {
                         </Button>
                       </div>
                       {booking.review_text && (
-                        <p className="text-sm text-green-700 italic">"{booking.review_text}"</p>
+                        <p className="text-sm text-green-700 italic mt-2 pl-0">"{booking.review_text}"</p>
                       )}
                     </div>
                   )}
