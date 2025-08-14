@@ -34,6 +34,10 @@
     --ring: 214 100% 80%;
 
     --radius: 0.5rem;
+    
+    /* Brand colors for Glow effect */
+    --brand: 220 90% 56%;
+    --brand-foreground: 220 90% 70%;
   }
 
   /* Remove dark mode styles completely */
@@ -66,6 +70,10 @@
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 214 100% 80%;
+    
+    /* Brand colors for Glow effect */
+    --brand: 220 90% 56%;
+    --brand-foreground: 220 90% 70%;
   }
 }
 
@@ -152,6 +160,29 @@
   }
 }
 
+/* Glow animations */
+@keyframes appear {
+  0% { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes appear-zoom {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.95); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+}
+
 .experience-icon {
   animation: pulse-subtle 3s infinite ease-in-out;
 }
@@ -168,6 +199,31 @@
 
 .animate-marquee {
   animation: marquee var(--duration) linear infinite;
+}
+
+/* Glow animation utilities */
+.animate-appear {
+  animation: appear 0.5s ease-out forwards;
+}
+
+.animate-appear-zoom {
+  animation: appear-zoom 0.5s ease-out forwards;
+}
+
+.delay-100 {
+  animation-delay: 100ms;
+}
+
+.delay-300 {
+  animation-delay: 300ms;
+}
+
+.delay-700 {
+  animation-delay: 700ms;
+}
+
+.delay-1000 {
+  animation-delay: 1000ms;
 }
 
 /* Force light mode for all elements */

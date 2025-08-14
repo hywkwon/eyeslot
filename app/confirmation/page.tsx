@@ -7,6 +7,7 @@ import { CheckCircle, Calendar, ArrowLeft } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useState, useEffect } from "react"
 import { Globe } from "@/components/ui/globe"
+import { Glow } from "@/components/ui/glow"
 
 export default function ConfirmationPage() {
   const router = useRouter()
@@ -31,6 +32,24 @@ export default function ConfirmationPage() {
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <Globe className="w-[700px] h-[700px]" />
+            </motion.div>
+
+            {/* Glow Effects */}
+            <motion.div
+              className="fixed inset-0 z-5"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
+            >
+              <Glow 
+                variant="center" 
+                className="animate-appear-zoom opacity-0 delay-300" 
+              />
+              <Glow 
+                variant="bottom" 
+                className="animate-appear-zoom opacity-0 delay-700" 
+              />
             </motion.div>
 
             {/* Main Content */}
