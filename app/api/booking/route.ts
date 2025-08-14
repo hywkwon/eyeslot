@@ -61,23 +61,31 @@ export async function POST(req: Request) {
   const webhook = storeWebhookMap[store_id];
   if (webhook) {
     try {
-      await fetch(webhook, {
+      const webhookData = {
+        name: user_name,
+        email,
+        phone,
+        visit_date,
+        visit_time,
+        request_note,
+        store_id,
+        status: "BOOKED",
+        lens_type: selectedPrescription ? selectedPrescription.powerType || '' : '',
+        right_eye: prescription ? `${prescription.rightEye.spherical || ''},${prescription.rightEye.cylindrical || ''},${prescription.rightEye.axis || ''}` : '',
+        left_eye: prescription ? `${prescription.leftEye.spherical || ''},${prescription.leftEye.cylindrical || ''},${prescription.leftEye.axis || ''}` : '',
+      };
+      
+      console.log("📤 Sending to Google Sheets:", JSON.stringify(webhookData, null, 2));
+      
+      const response = await fetch(webhook, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: user_name,
-          email,
-          phone,
-          visit_date,
-          visit_time,
-          request_note,
-          store_id,
-          status: "BOOKED",
-          lens_type: selectedPrescription ? selectedPrescription.powerType || '' : '',
-          right_eye: prescription ? `${prescription.rightEye.spherical || ''},${prescription.rightEye.cylindrical || ''},${prescription.rightEye.axis || ''}` : '',
-          left_eye: prescription ? `${prescription.leftEye.spherical || ''},${prescription.leftEye.cylindrical || ''},${prescription.leftEye.axis || ''}` : '',
-        }),
+        body: JSON.stringify(webhookData),
       });
+      
+      const responseText = await response.text();
+      console.log("📥 Google Sheets response:", response.status, responseText);
+      
     } catch (err) {
       console.error("❌ Google Sheets 전송 실패:", err);
     }
