@@ -44,11 +44,11 @@ export default function ConfirmationPage() {
             >
               <Glow 
                 variant="center" 
-                className="animate-appear-zoom opacity-0 delay-300" 
+                className="opacity-100" 
               />
               <Glow 
                 variant="bottom" 
-                className="animate-appear-zoom opacity-0 delay-700" 
+                className="opacity-100" 
               />
             </motion.div>
 
