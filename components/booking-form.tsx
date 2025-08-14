@@ -1290,6 +1290,7 @@ export default function BookingForm() {
                                     setSelectedPrescription(newPrescription)
                                     setShowPrescriptionForm(false)
                                     console.log('✅ Prescription saved to database successfully')
+                                    alert('✅ 처방전이 성공적으로 저장되었습니다!')
                                   } else {
                                     const errorResult = await response.json().catch(() => ({ error: 'Unknown error' }))
                                     console.error('❌ Failed to save prescription to database:', errorResult)
