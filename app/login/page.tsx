@@ -13,6 +13,7 @@ import UserSaveBackup from "@/components/user-save-backup"
 import UserSaveDebug from "@/components/user-save-debug"
 // 파일 상단에 import 추가
 import SupabaseDebugTester from "@/components/supabase-debug-tester"
+import KakaoRedirect from "@/components/kakao-redirect"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -253,6 +254,7 @@ export default function LoginPage() {
       animate="visible"
       variants={containerVariants}
     >
+      <KakaoRedirect />
       {/* Main content */}
       <div className="flex-1 flex flex-col relative z-10" style={{ backgroundColor: "white" }}>
         {/* Hero section */}

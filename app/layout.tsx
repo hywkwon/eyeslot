@@ -4,7 +4,6 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { AuthProvider } from "@/components/session-provider"
 import HeaderSection from "@/components/header-section"
-import KakaoRedirect from "@/components/kakao-redirect"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -33,7 +32,6 @@ export default function RootLayout({
         }}
       >
         <AuthProvider>
-          <KakaoRedirect />
           <HeaderSection />
           <main className="container mx-auto py-8 px-4" style={{ backgroundColor: "white", color: "black" }}>
             {children}
