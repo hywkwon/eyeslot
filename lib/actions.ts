@@ -42,6 +42,8 @@ interface BookingResponse {
 export async function submitBooking(form: BookingData): Promise<BookingResponse> {
   console.log("=== FRONTEND: submitBooking called ===")
   console.log("Form data being sent:", form)
+  console.log("🔍 Prescription data:", form.prescription)
+  console.log("🔍 Selected prescription:", form.selectedPrescription)
 
   try {
     // Validate input data first
@@ -108,6 +110,8 @@ export async function submitBooking(form: BookingData): Promise<BookingResponse>
   } catch (err) {
     console.error("=== SUBMIT BOOKING ERROR ===")
     console.error("Error details:", err)
+    console.error("Error type:", typeof err)
+    console.error("Error stack:", err instanceof Error ? err.stack : "No stack trace")
 
     const errorMessage = err instanceof Error ? err.message : "Unknown error occurred"
 
