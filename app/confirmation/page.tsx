@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import { CheckCircle, Calendar, ArrowLeft } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useState, useEffect } from "react"
-import { Glow } from "@/components/ui/glow"
 
 export default function ConfirmationPage() {
   const router = useRouter()
@@ -23,26 +22,9 @@ export default function ConfirmationPage() {
         {showDialog && (
           <>
 
-            {/* Glow Effects */}
-            <motion.div
-              className="fixed inset-0 z-20 pointer-events-none"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1.2, ease: "easeOut" }}
-            >
-              <Glow 
-                variant="center" 
-                className="opacity-100" 
-              />
-              <Glow 
-                variant="bottom" 
-                className="opacity-100" 
-              />
-            </motion.div>
 
             {/* Main Content */}
-            <div className="min-h-screen flex items-center justify-center p-4 relative z-40">
+            <div className="min-h-screen flex items-center justify-center p-4 relative z-20">
               <motion.div
                 initial={{ 
                   opacity: 0, 
