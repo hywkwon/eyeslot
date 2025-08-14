@@ -110,14 +110,28 @@ export default function BookingForm() {
       
       if (userEmail) {
         // Try to load from database first
-        const response = await fetch(`/api/prescriptions?user_email=${encodeURIComponent(userEmail)}`)
+        const apiUrl = `/api/prescriptions?user_email=${encodeURIComponent(userEmail)}`
+        console.log('📡 Fetching from API:', apiUrl)
+        
+        const response = await fetch(apiUrl)
+        console.log('📊 API Response status:', response.status)
+        console.log('📊 API Response ok:', response.ok)
         
         if (response.ok) {
           const result = await response.json()
           console.log('✅ Loaded prescriptions from database:', result.data)
           setSavedPrescriptions(result.data || [])
         } else {
-          console.log('❌ Failed to load from database, checking localStorage')
+          const errorResult = await response.json().catch(() => ({ error: 'Unknown error' }))
+          console.error('❌ Failed to load from database:', errorResult)
+          
+          // Check if it's a database setup issue
+          if (errorResult.requiresSetup) {
+            console.error('❌ CRITICAL: Database table not found!')
+            // Show user-friendly error or fallback to localStorage
+          }
+          
+          console.log('🔄 Falling back to localStorage migration')
           // Fallback to localStorage for migration
           await migrateLocalStorageToDatabase(userEmail)
         }
@@ -125,10 +139,13 @@ export default function BookingForm() {
         console.log('❌ No user email found')
       }
     } catch (error) {
-      console.error('Failed to load saved prescriptions:', error)
+      console.error('❌ Error loading prescriptions:', error)
+      console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack trace')
+      
       // Fallback to localStorage if database fails
       const userEmail = session?.user?.email
       if (userEmail) {
+        console.log('🔄 Attempting localStorage migration fallback')
         await migrateLocalStorageToDatabase(userEmail)
       }
     }
@@ -1235,19 +1252,27 @@ export default function BookingForm() {
                             if (userEmail && form.prescription) {
                               const createPrescription = async () => {
                                 try {
+                                  const prescriptionData = {
+                                    user_email: userEmail,
+                                    name: nameInput.value.trim(),
+                                    power_type: powerTypeSelect.value,
+                                    prescription_data: form.prescription
+                                  }
+                                  
+                                  console.log('📝 Creating prescription:', prescriptionData)
+                                  
                                   const response = await fetch('/api/prescriptions', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                      user_email: userEmail,
-                                      name: nameInput.value.trim(),
-                                      power_type: powerTypeSelect.value,
-                                      prescription_data: form.prescription
-                                    })
+                                    body: JSON.stringify(prescriptionData)
                                   })
+
+                                  console.log('📊 Create prescription response status:', response.status)
+                                  console.log('📊 Create prescription response ok:', response.ok)
 
                                   if (response.ok) {
                                     const result = await response.json()
+                                    console.log('✅ Create prescription result:', result)
                                     const newPrescription = result.data
                                     
                                     const updatedPrescriptions = [...savedPrescriptions, newPrescription]
@@ -1258,7 +1283,12 @@ export default function BookingForm() {
                                     setShowPrescriptionForm(false)
                                     console.log('✅ Prescription saved to database successfully')
                                   } else {
-                                    console.error('❌ Failed to save prescription to database')
+                                    const errorResult = await response.json().catch(() => ({ error: 'Unknown error' }))
+                                    console.error('❌ Failed to save prescription to database:', errorResult)
+                                    console.error('❌ Response status:', response.status)
+                                    
+                                    // Show user-friendly error
+                                    alert('처방전 저장에 실패했습니다. 다시 시도해주세요.')
                                   }
                                 } catch (error) {
                                   console.error('❌ Error saving prescription:', error)

@@ -43,32 +43,59 @@ export async function OPTIONS() {
 
 // GET: 사용자별 처방전 목록 조회
 export async function GET(req: Request) {
+  console.log("📥 GET /api/prescriptions called");
+  
   const { searchParams } = new URL(req.url);
   const user_email = searchParams.get("user_email");
 
+  console.log("🔍 Request user_email:", user_email);
+
   if (!user_email) {
+    console.log("❌ No user_email provided");
     return NextResponse.json({ error: "user_email is required" }, { status: 400 });
   }
 
   try {
-    const response = await fetch(
-      `${supabaseUrl}/rest/v1/prescriptions?user_email=eq.${encodeURIComponent(user_email)}&order=created_at.desc`,
-      {
-        headers: {
-          apikey: supabaseKey,
-          Authorization: `Bearer ${supabaseKey}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    console.log("🔗 Supabase URL:", supabaseUrl);
+    console.log("🔑 Supabase Key exists:", !!supabaseKey);
+    
+    const fetchUrl = `${supabaseUrl}/rest/v1/prescriptions?user_email=eq.${encodeURIComponent(user_email)}&order=created_at.desc`;
+    console.log("📡 Fetching from:", fetchUrl);
+
+    const response = await fetch(fetchUrl, {
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    console.log("📊 Response status:", response.status);
+    console.log("📊 Response ok:", response.ok);
 
     if (!response.ok) {
       const errorData = await response.text();
-      console.error("❌ Failed to fetch prescriptions:", errorData);
-      return NextResponse.json({ error: "Failed to fetch prescriptions" }, { status: 500 });
+      console.error("❌ Supabase error response:", errorData);
+      console.error("❌ Response headers:", Object.fromEntries(response.headers.entries()));
+      
+      // 테이블이 존재하지 않는 경우 감지
+      if (errorData.includes('relation "prescriptions" does not exist')) {
+        console.error("❌ CRITICAL: prescriptions table does not exist in database!");
+        return NextResponse.json({ 
+          error: "Database table not found", 
+          detail: "prescriptions table needs to be created",
+          requiresSetup: true 
+        }, { status: 500 });
+      }
+      
+      return NextResponse.json({ 
+        error: "Failed to fetch prescriptions", 
+        detail: errorData 
+      }, { status: 500 });
     }
 
     const prescriptions = await response.json();
+    console.log("✅ Raw prescriptions from DB:", prescriptions);
     
     // 프론트엔드 형식에 맞게 변환
     const formattedPrescriptions = prescriptions.map((p: any) => ({
@@ -79,22 +106,42 @@ export async function GET(req: Request) {
       savedDate: p.created_at.split('T')[0]
     }));
 
+    console.log("📦 Formatted prescriptions:", formattedPrescriptions);
+    
     return NextResponse.json({ data: formattedPrescriptions });
   } catch (error) {
     console.error("❌ Error fetching prescriptions:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("❌ Error stack:", error instanceof Error ? error.stack : "No stack trace");
+    return NextResponse.json({ 
+      error: "Internal server error", 
+      detail: error instanceof Error ? error.message : "Unknown error" 
+    }, { status: 500 });
   }
 }
 
 // POST: 새 처방전 생성
 export async function POST(req: Request) {
+  console.log("📥 POST /api/prescriptions called");
+  
   try {
     const body: CreatePrescriptionRequest = await req.json();
     const { user_email, name, power_type, prescription_data } = body;
 
+    console.log("📝 Create prescription request:", { user_email, name, power_type, prescription_data });
+
     if (!user_email || !name || !power_type || !prescription_data) {
+      console.log("❌ Missing required fields:", { user_email: !!user_email, name: !!name, power_type: !!power_type, prescription_data: !!prescription_data });
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
+
+    const requestBody = {
+      user_email,
+      name,
+      power_type,
+      prescription_data,
+    };
+
+    console.log("📡 Sending to Supabase:", requestBody);
 
     const response = await fetch(`${supabaseUrl}/rest/v1/prescriptions`, {
       method: "POST",
@@ -104,18 +151,31 @@ export async function POST(req: Request) {
         "Content-Type": "application/json",
         Prefer: "return=representation",
       },
-      body: JSON.stringify({
-        user_email,
-        name,
-        power_type,
-        prescription_data,
-      }),
+      body: JSON.stringify(requestBody),
     });
+
+    console.log("📊 Create response status:", response.status);
+    console.log("📊 Create response ok:", response.ok);
 
     if (!response.ok) {
       const errorData = await response.text();
-      console.error("❌ Failed to create prescription:", errorData);
-      return NextResponse.json({ error: "Failed to create prescription" }, { status: 500 });
+      console.error("❌ Supabase create error:", errorData);
+      console.error("❌ Create response headers:", Object.fromEntries(response.headers.entries()));
+      
+      // 테이블이 존재하지 않는 경우 감지
+      if (errorData.includes('relation "prescriptions" does not exist')) {
+        console.error("❌ CRITICAL: prescriptions table does not exist in database!");
+        return NextResponse.json({ 
+          error: "Database table not found", 
+          detail: "prescriptions table needs to be created",
+          requiresSetup: true 
+        }, { status: 500 });
+      }
+      
+      return NextResponse.json({ 
+        error: "Failed to create prescription", 
+        detail: errorData 
+      }, { status: 500 });
     }
 
     const createdPrescription = await response.json();
