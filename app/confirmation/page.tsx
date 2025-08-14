@@ -24,13 +24,13 @@ export default function ConfirmationPage() {
           <>
             {/* Background Globe Animation */}
             <motion.div
-              className="fixed inset-0 z-10 flex items-center justify-center"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 0.3, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
+              className="fixed inset-0 z-10 flex items-end justify-center pb-20"
+              initial={{ opacity: 0, scale: 0.6 }}
+              animate={{ opacity: 0.4, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.6 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <Globe className="w-[500px] h-[500px]" />
+              <Globe className="w-[700px] h-[700px]" />
             </motion.div>
 
             {/* Main Content */}
