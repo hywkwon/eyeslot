@@ -1,12 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, Calendar, Clock, MessageSquare, Store, Info, X, Star } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
 import { useRouter } from "next/navigation"
 
 interface Booking {
@@ -31,6 +32,8 @@ export default function BookingLookup() {
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [searched, setSearched] = useState(false)
+  const [cache, setCache] = useState<{[email: string]: {bookings: Booking[], timestamp: number}}>({})
+  const CACHE_DURATION = 5 * 60 * 1000 // 5분
   
   // Review states
   const [reviewStates, setReviewStates] = useState<{[bookingId: string]: {rating: number, reviewText: string, isReviewing: boolean}}>({})
@@ -43,6 +46,17 @@ export default function BookingLookup() {
       setEmail(session.user.email)
     }
   }, [session])
+
+  // Debounced search effect
+  useEffect(() => {
+    if (!email || !/\S+@\S+\.\S+/.test(email)) return
+    
+    const timeoutId = setTimeout(() => {
+      handleLookup()
+    }, 1500) // 1.5초 디바운스
+
+    return () => clearTimeout(timeoutId)
+  }, [email])
 
   // Load existing reviews for bookings
   const loadExistingReviews = async (bookingsData: Booking[]) => {
@@ -110,8 +124,18 @@ export default function BookingLookup() {
     }
 
     setError("")
-    setIsLoading(true)
     setSearched(true)
+
+    // 캐시 확인
+    const cached = cache[email]
+    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+      console.log('Using cached data for', email)
+      setBookings(cached.bookings)
+      await loadExistingReviews(cached.bookings)
+      return
+    }
+
+    setIsLoading(true)
 
     try {
       // Use the local API route which proxies to the external API
@@ -131,6 +155,15 @@ export default function BookingLookup() {
         })
         setBookings(sortedBookings)
         
+        // 캐시에 저장
+        setCache(prev => ({
+          ...prev,
+          [email]: {
+            bookings: sortedBookings,
+            timestamp: Date.now()
+          }
+        }))
+        
         // Load existing reviews for each booking
         await loadExistingReviews(sortedBookings)
       } else if (Array.isArray(result)) {
@@ -141,6 +174,15 @@ export default function BookingLookup() {
           return dateA.getTime() - dateB.getTime()
         })
         setBookings(sortedBookings)
+        
+        // 캐시에 저장
+        setCache(prev => ({
+          ...prev,
+          [email]: {
+            bookings: sortedBookings,
+            timestamp: Date.now()
+          }
+        }))
         
         // Load existing reviews for each booking
         await loadExistingReviews(sortedBookings)
@@ -265,6 +307,16 @@ export default function BookingLookup() {
 
     console.log('Submitting review for booking:', bookingId, reviewState)
 
+    // 옵티미스틱 UI: 즉시 리뷰가 성공적으로 제출된 것처럼 UI 업데이트
+    setBookings(prev => prev.map(booking => 
+      booking.id === bookingId 
+        ? { ...booking, rating: reviewState.rating, review_text: reviewState.reviewText, reviewed: true }
+        : booking
+    ))
+
+    // 리뷰 상태 초기화 (폼 숨기기)
+    handleCancelReview(bookingId)
+
     try {
       // Find the booking to get the store_id
       const booking = bookings.find(b => b.id === bookingId)
@@ -290,22 +342,26 @@ export default function BookingLookup() {
 
       if (!res.ok) {
         console.error('Review submission failed:', result)
+        // 실패 시 옵티미스틱 상태 롤백
+        setBookings(prev => prev.map(booking => 
+          booking.id === bookingId 
+            ? { ...booking, rating: undefined, review_text: undefined, reviewed: false }
+            : booking
+        ))
         const errorMessage = result.error ? `${result.message}: ${result.error}` : result.message
         throw new Error(errorMessage || "Failed to submit review.")
       }
 
-      // Update booking with review info
-      setBookings(prev => prev.map(booking => 
-        booking.id === bookingId 
-          ? { ...booking, rating: reviewState.rating, review_text: reviewState.reviewText, reviewed: true }
-          : booking
-      ))
-
-      // Clear review state
-      handleCancelReview(bookingId)
-      alert("Review submitted successfully!")
+      // 성공 시 이미 옵티미스틱 업데이트가 적용되었으므로 추가 작업 없음
+      console.log("Review submitted successfully!")
     } catch (err: any) {
       console.error('Review submission error:', err)
+      // 에러 시 옵티미스틱 상태 롤백 (이미 실패 처리에서 했지만 네트워크 에러 등을 위해)
+      setBookings(prev => prev.map(booking => 
+        booking.id === bookingId 
+          ? { ...booking, rating: undefined, review_text: undefined, reviewed: false }
+          : booking
+      ))
       alert(err.message || "Failed to submit review. Please try again.")
     }
   }
@@ -381,6 +437,35 @@ export default function BookingLookup() {
           <Alert variant="destructive">
             <AlertDescription>{error}</AlertDescription>
           </Alert>
+        )}
+
+        {isLoading && searched && (
+          <div className="space-y-4 mt-4">
+            <Skeleton className="h-6 w-40" />
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="border rounded-lg p-4 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-4 w-4" />
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-4 w-32" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-4 w-4" />
+                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-4 w-40" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-4 w-4" />
+                  <Skeleton className="h-4 w-12" />
+                  <Skeleton className="h-4 w-24" />
+                </div>
+                <Skeleton className="h-16 w-full" />
+                <div className="text-right">
+                  <Skeleton className="h-9 w-32 ml-auto" />
+                </div>
+              </div>
+            ))}
+          </div>
         )}
 
         {searched && bookings.length === 0 && !error && !isLoading && (

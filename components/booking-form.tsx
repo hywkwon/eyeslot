@@ -81,6 +81,7 @@ export default function BookingForm() {
   const [submitError, setSubmitError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState<FormErrors>({})
+  const [optimisticSubmission, setOptimisticSubmission] = useState(false)
   
   // Prescription states
   const [showPrescriptionForm, setShowPrescriptionForm] = useState(false)
@@ -726,7 +727,9 @@ export default function BookingForm() {
     }
 
     console.log("✅ Form validation passed - proceeding with submission")
-    setIsLoading(true)
+    
+    // 옵티미스틱 UI: 즉시 성공 상태로 전환
+    setOptimisticSubmission(true)
     setSubmitError("")
 
     try {
@@ -736,20 +739,25 @@ export default function BookingForm() {
       };
       console.log("🚀 Submitting booking data:", bookingData);
       
-      console.log("📞 Calling submitBooking function...");
-      console.log("🔍 submitBooking type:", typeof submitBooking);
-      console.log("🔍 submitBooking function:", submitBooking);
-      
+      // 백그라운드에서 실제 API 호출
+      setIsLoading(true)
       const result = await submitBooking(bookingData);
       console.log("📦 submitBooking result:", result);
 
       if (result.success) {
+        // 실제 성공 시 최종 상태로 변경
         setSubmitted(true)
+        setOptimisticSubmission(false)
       } else {
+        // 실패 시 옵티미스틱 상태 롤백
+        setOptimisticSubmission(false)
         setSubmitError(result.message || "Submission failed. Please try again.")
       }
     } catch (err) {
       console.error("Form submission error:", err)
+      
+      // 에러 시 옵티미스틱 상태 롤백
+      setOptimisticSubmission(false)
 
       // Handle different types of errors
       if (err instanceof Error) {
@@ -787,7 +795,7 @@ export default function BookingForm() {
     setSelectedPrescription(null)
   }
 
-  if (submitted) {
+  if (submitted || optimisticSubmission) {
     return (
       <div className="fixed inset-0 z-50">
         <AuroraBackground className="bg-white">
@@ -1327,8 +1335,12 @@ export default function BookingForm() {
         </div>
       </CardContent>
       <CardFooter>
-        <Button onClick={handleSubmit} disabled={isLoading} className="w-full">
-          {isLoading ? (
+        <Button onClick={handleSubmit} disabled={isLoading || optimisticSubmission} className="w-full">
+          {optimisticSubmission ? (
+            <>
+              <CheckCircle className="mr-2 h-4 w-4 text-green-500" /> Submitted!
+            </>
+          ) : isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
             </>
