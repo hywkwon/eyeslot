@@ -751,7 +751,7 @@ export default function BookingForm() {
       } else {
         // 실패 시 옵티미스틱 상태 롤백
         setOptimisticSubmission(false)
-        setSubmitError(result.message || "Submission failed. Please try again.")
+        setSubmitError(result.message || "Submission failed Please try again")
       }
     } catch (err) {
       console.error("Form submission error:", err)
@@ -762,12 +762,12 @@ export default function BookingForm() {
       // Handle different types of errors
       if (err instanceof Error) {
         if (err.message.includes("fetch") || err.message.includes("network")) {
-          setSubmitError("Network error. Please check your connection and try again.")
+          setSubmitError("Network error Please check your connection and try again")
         } else {
           setSubmitError(`Error: ${err.message}`)
         }
       } else {
-        setSubmitError("Network error. Please try again later.")
+        setSubmitError("Network error Please try again later")
       }
     } finally {
       setIsLoading(false)
@@ -818,14 +818,14 @@ export default function BookingForm() {
                 >
                   <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-6" />
                 </motion.div>
-                <CardTitle className="text-2xl mb-4 font-bold">Reservation Complete!</CardTitle>
+                <CardTitle className="text-2xl mb-4 font-bold">Reservation Complete</CardTitle>
                 <CardDescription className="mb-6 text-base">
-                  Thank you! Your booking has been submitted successfully.
+                  Thank you Your booking has been submitted successfully
                 </CardDescription>
                 
                 {/* Next Steps Guide */}
                 <div className="bg-gradient-to-br from-gray-50/90 to-white/90 rounded-xl p-6 text-left backdrop-blur-sm border border-white/30">
-                  <h4 className="font-bold text-gray-900 mb-4 text-center text-lg">What's Next?</h4>
+                  <h4 className="font-bold text-gray-900 mb-4 text-center text-lg">What's Next</h4>
                   <div className="space-y-3 text-sm text-gray-700">
                     <div className="flex items-start gap-3">
                       <span className="text-blue-500 font-bold text-lg leading-none">•</span>
@@ -841,14 +841,14 @@ export default function BookingForm() {
                     </div>
                     <div className="flex items-start gap-3">
                       <span className="text-blue-500 font-bold text-lg leading-none">•</span>
-                      <span className="flex-1"><strong>Need frames?</strong> Our team will help you find the perfect pair</span>
+                      <span className="flex-1"><strong>Need frames</strong> Our team will help you find the perfect pair</span>
                     </div>
                     <div className="flex items-start gap-3">
                       <span className="text-blue-500 font-bold text-lg leading-none">•</span>
                       <span className="flex-1"><strong>Share your experience</strong> with a review after your visit</span>
                     </div>
                   </div>
-                  <p className="text-center text-gray-600 text-base mt-6 font-medium">Welcome to Korea, See you soon.</p>
+                  <p className="text-center text-gray-600 text-base mt-6 font-medium">Welcome to Korea, See you soon</p>
                 </div>
               </CardContent>
               <CardFooter className="justify-center pb-8">
@@ -870,7 +870,7 @@ export default function BookingForm() {
     <Card className="max-w-xl mx-auto">
       <CardHeader>
         <CardTitle>Make a Reservation</CardTitle>
-        <CardDescription>Please fill out the form below to book your visit.</CardDescription>
+        <CardDescription>Please fill out the form below to book your visit</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {submitError && (
@@ -1290,14 +1290,14 @@ export default function BookingForm() {
                                     setSelectedPrescription(newPrescription)
                                     setShowPrescriptionForm(false)
                                     console.log('✅ Prescription saved to database successfully')
-                                    alert('Prescription saved successfully!')
+                                    alert('Prescription saved successfully')
                                   } else {
                                     const errorResult = await response.json().catch(() => ({ error: 'Unknown error' }))
                                     console.error('❌ Failed to save prescription to database:', errorResult)
                                     console.error('❌ Response status:', response.status)
                                     
                                     // Show user-friendly error
-                                    alert('Failed to save prescription. Please try again.')
+                                    alert('Failed to save prescription Please try again')
                                   }
                                 } catch (error) {
                                   console.error('❌ Error saving prescription:', error)
