@@ -950,7 +950,7 @@ export default function BookingForm() {
             }}
           >
             <option value="">Select a time</option>
-            {[...Array(10)].map((_, i) => {
+            {[...Array(8)].map((_, i) => {
               const hour = 11 + i
               return (
                 <option key={hour} value={`${hour}:00`}>
