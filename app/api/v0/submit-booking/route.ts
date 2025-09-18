@@ -82,7 +82,7 @@ export async function POST(request: Request) {
     }
 
     // Store validation
-    const validStores = ["viewraum", "lacitpo", "eyecatcher", "muelstore"]
+    const validStores = ["viewraum"]
     if (!validStores.includes(body.store_id)) {
       console.error("Invalid store ID:", body.store_id)
       return NextResponse.json(

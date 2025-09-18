@@ -317,18 +317,6 @@ export default function BookingForm() {
       googleMaps: "https://maps.app.goo.gl/3Z2pxvik9kzrEQtC7",
       naverMaps: "https://naver.me/FzSZ0p4u",
     },
-    lacitpo: {
-      googleMaps: "https://maps.app.goo.gl/u8MU7vdEnjc7A2Wt8",
-      naverMaps: "https://naver.me/53lKMqVj",
-    },
-    eyecatcher: {
-      googleMaps: "https://maps.app.goo.gl/ZVQfqPoh3K1Ekj8p7",
-      naverMaps: "https://naver.me/5jJHt6Gm",
-    },
-    oror: {
-      googleMaps: "https://maps.app.goo.gl/Jqrxswfe3JfUwrop9",
-      naverMaps: "https://naver.me/FvEPfG8g",
-    },
   }
 
   // Get today's date in YYYY-MM-DD format for min date
@@ -978,11 +966,7 @@ export default function BookingForm() {
               paddingRight: "2rem"
             }}
           >
-            <option value="">Select a store</option>
             <option value="viewraum">viewraum (seoul)</option>
-            <option value="lacitpo">lacitpo (seoul)</option>
-            <option value="eyecatcher">eyecatcher (seoul)</option>
-            <option value="oror">oror (seoul)</option>
           </select>
           {errors.store_id && <p className="text-sm text-red-500">{errors.store_id}</p>}
 

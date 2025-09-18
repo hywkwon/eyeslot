@@ -18,37 +18,6 @@ export default function StoreList() {
       description:
         "A premium eyewear store featuring Korea's top eyewear specialists and opticians with diverse experience.",
     },
-    {
-      id: "lacitpo",
-      name: "Lacitpo",
-      location: "Seoul",
-      address: "2F, 223-19 Seongsu-dong 2-ga, Seongdong-gu, Seoul",
-      hours: "11:00 AM - 8:00 PM (Tue-Sun), Closed (Mon)",
-      naverMapUrl: "https://naver.me/example-lacitpo",
-      googleMapUrl: "https://maps.app.goo.gl/example-lacitpo",
-      description: "A trendy eyewear boutique specializing in handcrafted frames and personalized styling services.",
-    },
-    {
-      id: "eyecatcher",
-      name: "Eyecatcher",
-      location: "Seoul",
-      address: "1F, 683-33 Hannam-dong, Yongsan-gu, Seoul",
-      hours: "10:30 AM - 7:30 PM (Daily)",
-      naverMapUrl: "https://naver.me/example-eyecatcher",
-      googleMapUrl: "https://maps.app.goo.gl/example-eyecatcher",
-      description:
-        "Foreigner-friendly eyewear store with multilingual staff and a curated selection of international brands.",
-    },
-    {
-      id: "muelstore",
-      name: "Muelstore",
-      location: "Seoul",
-      address: "3F, 13 Apgujeong-ro 46-gil, Gangnam-gu, Seoul",
-      hours: "12:00 PM - 9:00 PM (Daily)",
-      naverMapUrl: "https://naver.me/example-muelstore",
-      googleMapUrl: "https://maps.app.goo.gl/example-muelstore",
-      description: "A luxury eyewear destination offering exclusive designer frames and premium lens technology.",
-    },
   ]
 
   const containerVariants = {

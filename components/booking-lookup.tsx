@@ -422,14 +422,6 @@ export default function BookingLookup() {
     switch (id) {
       case "viewraum":
         return "viewraum (seoul)"
-      case "lacitpo":
-        return "lacitpo (seoul)"
-      case "eyecatcher":
-        return "eyecatcher (seoul)"
-      case "oror":
-        return "oror (seoul)"
-      case "muelstore":
-        return "muelstore (seoul)"
       default:
         return id
     }
